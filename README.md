@@ -13,6 +13,7 @@ A library to extend serde serializers and deserializers with the ability to read
 Currently the following file formats are supported:
 
 - `JSON` via the `json` feature.
+- `TOML` via the `toml` feature.
 - `XML` via the `xml` feature.
 - `YAML` via the `yaml` feature.
 
