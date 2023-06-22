@@ -10,7 +10,7 @@ struct Person {
 #[cfg(feature = "json")]
 mod json {
     use crate::Person;
-    use serde_from_file::FromFile;
+    use serde_rw::FromFile;
 
     #[test]
     fn from_file() {
@@ -27,7 +27,7 @@ mod json {
 #[cfg(feature = "xml")]
 mod xml {
     use crate::Person;
-    use serde_from_file::FromFile;
+    use serde_rw::FromFile;
 
     #[test]
     fn from_file() {
@@ -44,7 +44,7 @@ mod xml {
 #[cfg(feature = "yaml")]
 mod yaml {
     use crate::Person;
-    use serde_from_file::FromFile;
+    use serde_rw::FromFile;
 
     #[test]
     fn from_file() {
