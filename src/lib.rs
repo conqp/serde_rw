@@ -22,34 +22,34 @@ where
     #[cfg(feature = "json")]
     fn from_json_file(filename: &str) -> Result<Self, Error> {
         <Self as FromFile>::read_file(filename)
-            .and_then(|text| <Self as FromFile>::from_json_string(text))
+            .and_then(|text| <Self as FromFile>::from_json_string(&text))
     }
 
     #[cfg(feature = "json")]
-    fn from_json_string(text: String) -> Result<Self, Error> {
-        serde_json::from_str(&text).map_err(|error| Error::SerdeError(error.to_string()))
+    fn from_json_string(text: &str) -> Result<Self, Error> {
+        serde_json::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
     }
 
     #[cfg(feature = "yaml")]
     fn from_yaml_file(filename: &str) -> Result<Self, Error> {
         <Self as FromFile>::read_file(filename)
-            .and_then(|text| <Self as FromFile>::from_yaml_string(text))
+            .and_then(|text| <Self as FromFile>::from_yaml_string(&text))
     }
 
     #[cfg(feature = "yaml")]
-    fn from_yaml_string(text: String) -> Result<Self, Error> {
-        serde_yaml::from_str(&text).map_err(|error| Error::SerdeError(error.to_string()))
+    fn from_yaml_string(text: &str) -> Result<Self, Error> {
+        serde_yaml::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
     }
 
     #[cfg(feature = "xml")]
     fn from_xml_file(filename: &str) -> Result<Self, Error> {
         <Self as FromFile>::read_file(filename)
-            .and_then(|text| <Self as FromFile>::from_xml_string(text))
+            .and_then(|text| <Self as FromFile>::from_xml_string(&text))
     }
 
     #[cfg(feature = "xml")]
-    fn from_xml_string(text: String) -> Result<Self, Error> {
-        quick_xml::de::from_str(&text).map_err(|error| Error::SerdeError(error.to_string()))
+    fn from_xml_string(text: &str) -> Result<Self, Error> {
+        quick_xml::de::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
     }
 
     fn read_file(filename: &str) -> Result<String, Error> {
