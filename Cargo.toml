@@ -1,5 +1,5 @@
 [package]
-name = "serde_from_file"
+name = "serde_rw"
 authors = ["Richard Neumann <mail@richard-neumann.de>"]
 description = "Extend serde serializers and deserializers with the ability to read / write different file formats from / to files"
 license-file = "LICENSE"
