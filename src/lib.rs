@@ -24,13 +24,14 @@ impl Display for Error {
     }
 }
 
+/// Makes an object capable of reading itself from a file of a specified format
 pub trait FromFile
 where
     for<'de> Self: Deserialize<'de>,
 {
     /// Deserializes an object from a file dependent on its file extension
     /// # Arguments
-    /// * `filename` - The path to the file to be read
+    /// * `filename` - The path of the file to be read
     ///
     /// # Examples
     /// ```
@@ -108,7 +109,7 @@ where
     #[cfg(feature = "json")]
     /// Deserializes an object from a JSON file
     /// # Arguments
-    /// * `filename` - The path to the JSON file to be read
+    /// * `filename` - The path of the JSON file to be read
     ///
     /// # Examples
     /// ```
@@ -175,7 +176,7 @@ where
     #[cfg(feature = "toml")]
     /// Deserializes an object from a TOML file
     /// # Arguments
-    /// * `filename` - The path to the TOML file to be read
+    /// * `filename` - The path of the TOML file to be read
     ///
     /// # Examples
     /// ```
@@ -241,7 +242,7 @@ where
     #[cfg(feature = "xml")]
     /// Deserializes an object from an XML file
     /// # Arguments
-    /// * `filename` - The path to the XML file to be read
+    /// * `filename` - The path of the XML file to be read
     ///
     /// # Examples
     /// ```
@@ -306,7 +307,7 @@ where
     #[cfg(feature = "yaml")]
     /// Deserializes an object from a YAML file
     /// # Arguments
-    /// * `filename` - The path to the YAML file to be read
+    /// * `filename` - The path of the YAML file to be read
     ///
     /// # Examples
     /// ```
@@ -376,7 +377,11 @@ where
 
 impl<T> FromFile for T where T: for<'de> Deserialize<'de> {}
 
+/// Makes an object capable of writing itself to a file of a specified format
 pub trait ToFile: Serialize + Sized {
+    /// Serializes an object into a file dependent on its file extension
+    /// # Arguments
+    /// * `filename` - The path of the file to be written to
     fn write_to_file(&self, filename: &str) -> Result<(), Error> {
         match extension(&PathBuf::from(filename))? {
             #[cfg(feature = "json")]
