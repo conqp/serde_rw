@@ -13,10 +13,10 @@ where
             "json" => <Self as FromFile>::from_json_file(filename),
             #[cfg(feature = "toml")]
             "toml" => <Self as FromFile>::from_toml_file(filename),
-            #[cfg(feature = "yaml")]
-            "yml" | "yaml" => <Self as FromFile>::from_yaml_file(filename),
             #[cfg(feature = "xml")]
             "xml" => <Self as FromFile>::from_xml_file(filename),
+            #[cfg(feature = "yaml")]
+            "yml" | "yaml" => <Self as FromFile>::from_yaml_file(filename),
             extension => Err(Error::InvalidExtension(Some(extension.to_string()))),
         }
     }
@@ -43,17 +43,6 @@ where
         toml::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
     }
 
-    #[cfg(feature = "yaml")]
-    fn from_yaml_file(filename: &str) -> Result<Self, Error> {
-        <Self as FromFile>::read_file(filename)
-            .and_then(|text| <Self as FromFile>::from_yaml_string(&text))
-    }
-
-    #[cfg(feature = "yaml")]
-    fn from_yaml_string(text: &str) -> Result<Self, Error> {
-        serde_yaml::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
-    }
-
     #[cfg(feature = "xml")]
     fn from_xml_file(filename: &str) -> Result<Self, Error> {
         <Self as FromFile>::read_file(filename)
@@ -63,6 +52,17 @@ where
     #[cfg(feature = "xml")]
     fn from_xml_string(text: &str) -> Result<Self, Error> {
         quick_xml::de::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
+    }
+
+    #[cfg(feature = "yaml")]
+    fn from_yaml_file(filename: &str) -> Result<Self, Error> {
+        <Self as FromFile>::read_file(filename)
+            .and_then(|text| <Self as FromFile>::from_yaml_string(&text))
+    }
+
+    #[cfg(feature = "yaml")]
+    fn from_yaml_string(text: &str) -> Result<Self, Error> {
+        serde_yaml::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
     }
 
     fn read_file(filename: &str) -> Result<String, Error> {
@@ -79,10 +79,10 @@ pub trait ToFile: Serialize + Sized {
             "json" => <Self as ToFile>::write_to_json_file(self, filename),
             #[cfg(feature = "toml")]
             "toml" => <Self as ToFile>::write_to_toml_file(self, filename),
-            #[cfg(feature = "yaml")]
-            "yml" | "yaml" => <Self as ToFile>::write_to_yaml_file(self, filename),
             #[cfg(feature = "xml")]
             "xml" => <Self as ToFile>::write_to_xml_file(self, filename),
+            #[cfg(feature = "yaml")]
+            "yml" | "yaml" => <Self as ToFile>::write_to_yaml_file(self, filename),
             extension => Err(Error::InvalidExtension(Some(extension.to_string()))),
         }
     }
@@ -107,16 +107,6 @@ pub trait ToFile: Serialize + Sized {
         <Self as ToFile>::write_file(filename, <Self as ToFile>::to_toml(self)?)
     }
 
-    #[cfg(feature = "yaml")]
-    fn to_yaml(&self) -> Result<String, Error> {
-        serde_yaml::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
-    }
-
-    #[cfg(feature = "yaml")]
-    fn write_to_yaml_file(&self, filename: &str) -> Result<(), Error> {
-        <Self as ToFile>::write_file(filename, <Self as ToFile>::to_yaml(self)?)
-    }
-
     #[cfg(feature = "xml")]
     fn to_xml(&self) -> Result<String, Error> {
         quick_xml::se::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
@@ -125,6 +115,16 @@ pub trait ToFile: Serialize + Sized {
     #[cfg(feature = "xml")]
     fn write_to_xml_file(&self, filename: &str) -> Result<(), Error> {
         <Self as ToFile>::write_file(filename, <Self as ToFile>::to_xml(self)?)
+    }
+
+    #[cfg(feature = "yaml")]
+    fn to_yaml(&self) -> Result<String, Error> {
+        serde_yaml::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
+    }
+
+    #[cfg(feature = "yaml")]
+    fn write_to_yaml_file(&self, filename: &str) -> Result<(), Error> {
+        <Self as ToFile>::write_file(filename, <Self as ToFile>::to_yaml(self)?)
     }
 
     fn write_file(filename: &str, content: String) -> Result<(), Error> {
