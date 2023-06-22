@@ -17,4 +17,4 @@ Currently the following file formats are supported:
 - `YAML` via the `yaml` feature.
 
 ## Credits
-This library is heavily inspired by [`from_file`](https://github.com/shakyShane/from_file) by [Shane Osbourne](https://github.com/shakyShane).
+This library is inspired by [`from_file`](https://github.com/shakyShane/from_file) by [Shane Osbourne](https://github.com/shakyShane).
