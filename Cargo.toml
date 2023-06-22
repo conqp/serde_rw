@@ -1,5 +1,14 @@
 [package]
 name = "serde_from_file"
+authors = ["Richard Neumann <mail@richard-neumann.de>"]
+description = "Extend serde serializers and deserializers with the ability to read / write different file formats from / to files"
+license-file = "LICENSE"
+homepage = "https://github.com/conqp/serde_rw/"
+repository = "https://github.com/conqp/serde_rw/"
+readme = "README.md"
+documentation = "https://docs.rs/serde_rw"
+keywords = ["serde", "file", "read", "write"]
+categories = ["parsing"]
 version = "0.1.0"
 edition = "2021"
 
