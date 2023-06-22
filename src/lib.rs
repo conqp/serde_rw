@@ -63,13 +63,11 @@ pub trait ToFile: Serialize + Sized {
     fn write_to_file(&self, filename: &str) -> Result<(), Error> {
         match extension(&PathBuf::from(filename))? {
             #[cfg(feature = "json")]
-            "json" => <Self as ToFile>::write_file(filename, <Self as ToFile>::to_json(self)?),
+            "json" => <Self as ToFile>::write_to_json_file(self, filename),
             #[cfg(feature = "yaml")]
-            "yml" | "yaml" => {
-                <Self as ToFile>::write_file(filename, <Self as ToFile>::to_yaml(self)?)
-            }
+            "yml" | "yaml" => <Self as ToFile>::write_to_yaml_file(self, filename),
             #[cfg(feature = "xml")]
-            "xml" => <Self as ToFile>::write_file(filename, <Self as ToFile>::to_xml(self)?),
+            "xml" => <Self as ToFile>::write_to_xml_file(self, filename),
             extension => Err(Error::InvalidExtension(Some(extension.to_string()))),
         }
     }
@@ -79,14 +77,29 @@ pub trait ToFile: Serialize + Sized {
         serde_json::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
     }
 
+    #[cfg(feature = "json")]
+    fn write_to_json_file(&self, filename: &str) -> Result<(), Error> {
+        <Self as ToFile>::write_file(filename, <Self as ToFile>::to_json(self)?)
+    }
+
     #[cfg(feature = "yaml")]
     fn to_yaml(&self) -> Result<String, Error> {
         serde_yaml::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
     }
 
+    #[cfg(feature = "yaml")]
+    fn write_to_yaml_file(&self, filename: &str) -> Result<(), Error> {
+        <Self as ToFile>::write_file(filename, <Self as ToFile>::to_yaml(self)?)
+    }
+
     #[cfg(feature = "xml")]
     fn to_xml(&self) -> Result<String, Error> {
         quick_xml::se::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
+    }
+
+    #[cfg(feature = "xml")]
+    fn write_to_xml_file(&self, filename: &str) -> Result<(), Error> {
+        <Self as ToFile>::write_file(filename, <Self as ToFile>::to_xml(self)?)
     }
 
     fn write_file(filename: &str, content: String) -> Result<(), Error> {
