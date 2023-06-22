@@ -28,6 +28,69 @@ pub trait FromFile
 where
     for<'de> Self: Deserialize<'de>,
 {
+    /// Deserializes an object from a file dependent on its file extension
+    /// # Arguments
+    /// * `filename` - The path to the file to be read
+    ///
+    /// # Examples
+    /// ```
+    /// use serde_rw::FromFile;
+    /// use serde::Deserialize;
+    ///
+    /// #[derive(Debug, Deserialize, Eq, PartialEq)]
+    /// struct Person {
+    ///     id: u32,
+    ///     name: String,
+    /// }
+    ///
+    /// // Read JSON files with the `json` feature:
+    /// #[cfg(feature = "json")]
+    /// {
+    ///     assert_eq!(
+    ///         Person::from_file("./tests/person.json").unwrap(),
+    ///         Person {
+    ///             id: 1337,
+    ///             name: "John Doe".to_string(),
+    ///         }
+    ///     );
+    /// }
+    ///
+    /// // Read TOML files with the `toml` feature:
+    /// #[cfg(feature = "toml")]
+    /// {
+    ///     assert_eq!(
+    ///         Person::from_file("./tests/person.toml").unwrap(),
+    ///         Person {
+    ///             id: 1337,
+    ///             name: "John Doe".to_string(),
+    ///         }
+    ///     );
+    /// }
+    ///
+    /// // Read XML files with the `xml` feature:
+    /// #[cfg(feature = "xml")]
+    /// {
+    ///     assert_eq!(
+    ///         Person::from_file("./tests/person.xml").unwrap(),
+    ///         Person {
+    ///             id: 1337,
+    ///             name: "John Doe".to_string(),
+    ///         }
+    ///     );
+    /// }
+    ///
+    /// // Read YAML files with the `yaml` feature:
+    /// #[cfg(feature = "yaml")]
+    /// {
+    ///     assert_eq!(
+    ///         Person::from_file("./tests/person.yml").unwrap(),
+    ///         Person {
+    ///             id: 1337,
+    ///             name: "John Doe".to_string(),
+    ///         }
+    ///     );
+    /// }
+    /// ```
     fn from_file(filename: &str) -> Result<Self, Error> {
         match extension(&PathBuf::from(filename))? {
             #[cfg(feature = "json")]
@@ -43,45 +106,265 @@ where
     }
 
     #[cfg(feature = "json")]
+    /// Deserializes an object from a JSON file
+    /// # Arguments
+    /// * `filename` - The path to the JSON file to be read
+    ///
+    /// # Examples
+    /// ```
+    /// use serde_rw::FromFile;
+    /// use serde::Deserialize;
+    ///
+    /// #[derive(Debug, Deserialize, Eq, PartialEq)]
+    /// struct Person {
+    ///     id: u32,
+    ///     name: String,
+    /// }
+    ///
+    /// #[cfg(feature = "json")]
+    /// {
+    ///     assert_eq!(
+    ///         Person::from_json_file("./tests/person.json").unwrap(),
+    ///         Person {
+    ///             id: 1337,
+    ///             name: "John Doe".to_string(),
+    ///         }
+    ///     );
+    /// }
+    /// ```
     fn from_json_file(filename: &str) -> Result<Self, Error> {
         <Self as FromFile>::read_file(filename)
             .and_then(|text| <Self as FromFile>::from_json_string(&text))
     }
 
+
     #[cfg(feature = "json")]
+    /// Deserializes an object from a JSON string
+    /// # Arguments
+    /// * `text` - A JSON file's content
+    ///
+    /// # Examples
+    /// ```
+    /// use serde_rw::FromFile;
+    /// use serde::Deserialize;
+    ///
+    /// #[derive(Debug, Deserialize, Eq, PartialEq)]
+    /// struct Person {
+    ///     id: u32,
+    ///     name: String,
+    /// }
+    ///
+    /// const JSON: &str = r#"{"id": 1337, "name": "John Doe"}"#;
+    ///
+    /// #[cfg(feature = "json")]
+    /// {
+    ///     assert_eq!(
+    ///         Person::from_json_string(JSON).unwrap(),
+    ///         Person {
+    ///             id: 1337,
+    ///             name: "John Doe".to_string(),
+    ///         }
+    ///     );
+    /// }
+    /// ```
     fn from_json_string(text: &str) -> Result<Self, Error> {
         serde_json::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
     }
 
+
     #[cfg(feature = "toml")]
+    /// Deserializes an object from a TOML file
+    /// # Arguments
+    /// * `filename` - The path to the TOML file to be read
+    ///
+    /// # Examples
+    /// ```
+    /// use serde_rw::FromFile;
+    /// use serde::Deserialize;
+    ///
+    /// #[derive(Debug, Deserialize, Eq, PartialEq)]
+    /// struct Person {
+    ///     id: u32,
+    ///     name: String,
+    /// }
+    ///
+    /// #[cfg(feature = "toml")]
+    /// {
+    ///     assert_eq!(
+    ///         Person::from_toml_file("./tests/person.toml").unwrap(),
+    ///         Person {
+    ///             id: 1337,
+    ///             name: "John Doe".to_string(),
+    ///         }
+    ///     );
+    /// }
+    /// ```
     fn from_toml_file(filename: &str) -> Result<Self, Error> {
         <Self as FromFile>::read_file(filename)
             .and_then(|text| <Self as FromFile>::from_toml_string(&text))
     }
 
     #[cfg(feature = "toml")]
+    /// Deserializes an object from a TOML string
+    /// # Arguments
+    /// * `text` - A TOML file's content
+    ///
+    /// # Examples
+    /// ```
+    /// use serde_rw::FromFile;
+    /// use serde::Deserialize;
+    ///
+    /// #[derive(Debug, Deserialize, Eq, PartialEq)]
+    /// struct Person {
+    ///     id: u32,
+    ///     name: String,
+    /// }
+    ///
+    /// const TOML: &str = r#"id = 1337
+    /// name = "John Doe""#;
+    ///
+    /// #[cfg(feature = "toml")]
+    /// {
+    ///     assert_eq!(
+    ///         Person::from_toml_string(TOML).unwrap(),
+    ///         Person {
+    ///             id: 1337,
+    ///             name: "John Doe".to_string(),
+    ///         }
+    ///     );
+    /// }
+    /// ```
     fn from_toml_string(text: &str) -> Result<Self, Error> {
         toml::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
     }
 
     #[cfg(feature = "xml")]
+    /// Deserializes an object from an XML file
+    /// # Arguments
+    /// * `filename` - The path to the XML file to be read
+    ///
+    /// # Examples
+    /// ```
+    /// use serde_rw::FromFile;
+    /// use serde::Deserialize;
+    ///
+    /// #[derive(Debug, Deserialize, Eq, PartialEq)]
+    /// struct Person {
+    ///     id: u32,
+    ///     name: String,
+    /// }
+    ///
+    /// #[cfg(feature = "xml")]
+    /// {
+    ///     assert_eq!(
+    ///         Person::from_xml_file("./tests/person.xml").unwrap(),
+    ///         Person {
+    ///             id: 1337,
+    ///             name: "John Doe".to_string(),
+    ///         }
+    ///     );
+    /// }
+    /// ```
     fn from_xml_file(filename: &str) -> Result<Self, Error> {
         <Self as FromFile>::read_file(filename)
             .and_then(|text| <Self as FromFile>::from_xml_string(&text))
     }
 
     #[cfg(feature = "xml")]
+    /// Deserializes an object from an XML string
+    /// # Arguments
+    /// * `text` - An XML file's content
+    ///
+    /// # Examples
+    /// ```
+    /// use serde_rw::FromFile;
+    /// use serde::Deserialize;
+    ///
+    /// #[derive(Debug, Deserialize, Eq, PartialEq)]
+    /// struct Person {
+    ///     id: u32,
+    ///     name: String,
+    /// }
+    ///
+    /// const XML: &str = "<person><id>1337</id><name>John Doe</name></person>";
+    ///
+    /// #[cfg(feature = "xml")]
+    /// {
+    ///     assert_eq!(
+    ///         Person::from_xml_string(XML).unwrap(),
+    ///         Person {
+    ///             id: 1337,
+    ///             name: "John Doe".to_string(),
+    ///         }
+    ///     );
+    /// }
+    /// ```
     fn from_xml_string(text: &str) -> Result<Self, Error> {
         quick_xml::de::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
     }
 
     #[cfg(feature = "yaml")]
+    /// Deserializes an object from a YAML file
+    /// # Arguments
+    /// * `filename` - The path to the YAML file to be read
+    ///
+    /// # Examples
+    /// ```
+    /// use serde_rw::FromFile;
+    /// use serde::Deserialize;
+    ///
+    /// #[derive(Debug, Deserialize, Eq, PartialEq)]
+    /// struct Person {
+    ///     id: u32,
+    ///     name: String,
+    /// }
+    ///
+    /// #[cfg(feature = "yaml")]
+    /// {
+    ///     assert_eq!(
+    ///         Person::from_yaml_file("./tests/person.yml").unwrap(),
+    ///         Person {
+    ///             id: 1337,
+    ///             name: "John Doe".to_string(),
+    ///         }
+    ///     );
+    /// }
+    /// ```
     fn from_yaml_file(filename: &str) -> Result<Self, Error> {
         <Self as FromFile>::read_file(filename)
             .and_then(|text| <Self as FromFile>::from_yaml_string(&text))
     }
 
     #[cfg(feature = "yaml")]
+    /// Deserializes an object from a YAML string
+    /// # Arguments
+    /// * `text` - A YAML file's content
+    ///
+    /// # Examples
+    /// ```
+    /// use serde_rw::FromFile;
+    /// use serde::Deserialize;
+    ///
+    /// #[derive(Debug, Deserialize, Eq, PartialEq)]
+    /// struct Person {
+    ///     id: u32,
+    ///     name: String,
+    /// }
+    ///
+    /// const YAML: &str = r#"id: 1337
+    /// name: "John Doe""#;
+    ///
+    /// #[cfg(feature = "yaml")]
+    /// {
+    ///     assert_eq!(
+    ///         Person::from_yaml_string(YAML).unwrap(),
+    ///         Person {
+    ///             id: 1337,
+    ///             name: "John Doe".to_string(),
+    ///         }
+    ///     );
+    /// }
+    /// ```
     fn from_yaml_string(text: &str) -> Result<Self, Error> {
         serde_yaml::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
     }
