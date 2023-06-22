@@ -11,6 +11,8 @@ where
         match extension(&PathBuf::from(filename))? {
             #[cfg(feature = "json")]
             "json" => <Self as FromFile>::from_json_file(filename),
+            #[cfg(feature = "toml")]
+            "toml" => <Self as FromFile>::from_toml_file(filename),
             #[cfg(feature = "yaml")]
             "yml" | "yaml" => <Self as FromFile>::from_yaml_file(filename),
             #[cfg(feature = "xml")]
@@ -28,6 +30,17 @@ where
     #[cfg(feature = "json")]
     fn from_json_string(text: &str) -> Result<Self, Error> {
         serde_json::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
+    }
+
+    #[cfg(feature = "toml")]
+    fn from_toml_file(filename: &str) -> Result<Self, Error> {
+        <Self as FromFile>::read_file(filename)
+            .and_then(|text| <Self as FromFile>::from_toml_string(&text))
+    }
+
+    #[cfg(feature = "toml")]
+    fn from_toml_string(text: &str) -> Result<Self, Error> {
+        toml::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
     }
 
     #[cfg(feature = "yaml")]
@@ -64,6 +77,8 @@ pub trait ToFile: Serialize + Sized {
         match extension(&PathBuf::from(filename))? {
             #[cfg(feature = "json")]
             "json" => <Self as ToFile>::write_to_json_file(self, filename),
+            #[cfg(feature = "toml")]
+            "toml" => <Self as ToFile>::write_to_toml_file(self, filename),
             #[cfg(feature = "yaml")]
             "yml" | "yaml" => <Self as ToFile>::write_to_yaml_file(self, filename),
             #[cfg(feature = "xml")]
@@ -80,6 +95,16 @@ pub trait ToFile: Serialize + Sized {
     #[cfg(feature = "json")]
     fn write_to_json_file(&self, filename: &str) -> Result<(), Error> {
         <Self as ToFile>::write_file(filename, <Self as ToFile>::to_json(self)?)
+    }
+
+    #[cfg(feature = "toml")]
+    fn to_toml(&self) -> Result<String, Error> {
+        toml::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
+    }
+
+    #[cfg(feature = "toml")]
+    fn write_to_toml_file(&self, filename: &str) -> Result<(), Error> {
+        <Self as ToFile>::write_file(filename, <Self as ToFile>::to_toml(self)?)
     }
 
     #[cfg(feature = "yaml")]

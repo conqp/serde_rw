@@ -24,6 +24,23 @@ mod json {
     }
 }
 
+#[cfg(feature = "toml")]
+mod toml {
+    use crate::Person;
+    use serde_rw::FromFile;
+
+    #[test]
+    fn from_file() {
+        assert_eq!(
+            Person::from_file("./tests/person.toml").unwrap(),
+            Person {
+                id: 1337,
+                name: "John Doe".to_string()
+            },
+        )
+    }
+}
+
 #[cfg(feature = "xml")]
 mod xml {
     use crate::Person;
