@@ -138,7 +138,6 @@ where
             .and_then(|text| <Self as FromFile>::from_json_string(&text))
     }
 
-
     #[cfg(feature = "json")]
     /// Deserializes an object from a JSON string
     /// # Arguments
@@ -171,7 +170,6 @@ where
     fn from_json_string(text: &str) -> Result<Self, Error> {
         serde_json::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
     }
-
 
     #[cfg(feature = "toml")]
     /// Deserializes an object from a TOML file
