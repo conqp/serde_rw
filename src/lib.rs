@@ -3,6 +3,27 @@ use std::fmt::{Display, Formatter};
 use std::fs::{read_to_string, write};
 use std::path::{Path, PathBuf};
 
+#[derive(Debug)]
+pub enum Error {
+    FileError(std::io::Error),
+    InvalidExtension(Option<String>),
+    SerdeError(String),
+}
+
+impl Display for Error {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::FileError(error) => write!(f, "{}", error),
+            Self::InvalidExtension(string) => write!(
+                f,
+                r#"Invalid extension: "{}""#,
+                string.as_deref().unwrap_or("")
+            ),
+            Self::SerdeError(message) => write!(f, "{}", message),
+        }
+    }
+}
+
 pub trait FromFile
 where
     for<'de> Self: Deserialize<'de>,
@@ -133,27 +154,6 @@ pub trait ToFile: Serialize + Sized {
 }
 
 impl<T> ToFile for T where T: Serialize {}
-
-#[derive(Debug)]
-pub enum Error {
-    FileError(std::io::Error),
-    InvalidExtension(Option<String>),
-    SerdeError(String),
-}
-
-impl Display for Error {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::FileError(error) => write!(f, "{}", error),
-            Self::InvalidExtension(string) => write!(
-                f,
-                r#"Invalid extension: "{}""#,
-                string.as_deref().unwrap_or("")
-            ),
-            Self::SerdeError(message) => write!(f, "{}", message),
-        }
-    }
-}
 
 fn extension(path: &Path) -> Result<&str, Error> {
     path.extension()
