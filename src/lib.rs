@@ -13,13 +13,13 @@ pub enum Error {
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::FileError(error) => write!(f, "{}", error),
+            Self::FileError(error) => write!(f, "{error}"),
             Self::InvalidExtension(string) => write!(
                 f,
                 r#"Invalid extension: "{}""#,
                 string.as_deref().unwrap_or("")
             ),
-            Self::SerdeError(message) => write!(f, "{}", message),
+            Self::SerdeError(message) => write!(f, "{message}"),
         }
     }
 }
@@ -32,6 +32,9 @@ where
     /// Deserializes an object from a file dependent on its file extension
     /// # Arguments
     /// * `filename` - The path of the file to be read
+    ///
+    /// # Errors
+    /// * `serde_rw::Error` - If the file could not be read
     ///
     /// # Examples
     /// ```
@@ -111,6 +114,9 @@ where
     /// # Arguments
     /// * `filename` - The path of the JSON file to be read
     ///
+    /// # Errors
+    /// * `serde_rw::Error` - If the file could not be read
+    ///
     /// # Examples
     /// ```
     /// use serde_rw::FromFile;
@@ -142,6 +148,9 @@ where
     /// Deserializes an object from a JSON string
     /// # Arguments
     /// * `text` - A JSON file's content
+    ///
+    /// # Errors
+    /// * `serde_rw::Error` - If the text could not be deserialized
     ///
     /// # Examples
     /// ```
@@ -176,6 +185,9 @@ where
     /// # Arguments
     /// * `filename` - The path of the TOML file to be read
     ///
+    /// # Errors
+    /// * `serde_rw::Error` - If the file could not be read
+    ///
     /// # Examples
     /// ```
     /// use serde_rw::FromFile;
@@ -207,6 +219,9 @@ where
     /// Deserializes an object from a TOML string
     /// # Arguments
     /// * `text` - A TOML file's content
+    ///
+    /// # Errors
+    /// * `serde_rw::Error` - If the text could not be deserialized
     ///
     /// # Examples
     /// ```
@@ -242,6 +257,9 @@ where
     /// # Arguments
     /// * `filename` - The path of the XML file to be read
     ///
+    /// # Errors
+    /// * `serde_rw::Error` - If the file could not be read
+    ///
     /// # Examples
     /// ```
     /// use serde_rw::FromFile;
@@ -273,6 +291,9 @@ where
     /// Deserializes an object from an XML string
     /// # Arguments
     /// * `text` - An XML file's content
+    ///
+    /// # Errors
+    /// * `serde_rw::Error` - If the text could not be deserialized
     ///
     /// # Examples
     /// ```
@@ -307,6 +328,9 @@ where
     /// # Arguments
     /// * `filename` - The path of the YAML file to be read
     ///
+    /// # Errors
+    /// * `serde_rw::Error` - If the file could not be read
+    ///
     /// # Examples
     /// ```
     /// use serde_rw::FromFile;
@@ -338,6 +362,9 @@ where
     /// Deserializes an object from a YAML string
     /// # Arguments
     /// * `text` - A YAML file's content
+    ///
+    /// # Errors
+    /// * `serde_rw::Error` - If the text could not be deserialized
     ///
     /// # Examples
     /// ```
@@ -443,6 +470,6 @@ impl<T> ToFile for T where T: Serialize {}
 
 fn extension(path: &Path) -> Result<&str, Error> {
     path.extension()
-        .and_then(|extension| extension.to_str())
+        .and_then(std::ffi::OsStr::to_str)
         .ok_or(Error::InvalidExtension(None))
 }
