@@ -3,8 +3,8 @@ pub mod featured {
     use crate::Error;
     use serde::de::DeserializeOwned;
     use serde::Serialize;
+    use std::fmt::Write;
     use std::fs::{read_to_string, write};
-    use std::io::Write;
 
     pub trait FromXml: DeserializeOwned {
         /// Deserializes an object from an XML file
