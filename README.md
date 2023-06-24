@@ -10,7 +10,7 @@ A library to extend serde serializers and deserializers with the ability to read
 - `ToFile` is auto-implemented for `serde::Serialize`.
 
 ### File formats
-Currently the following file formats are supported:
+Currently, the following file formats are supported:
 
 - `JSON` via the `json` feature.
 - `TOML` via the `toml` feature.
