@@ -36,7 +36,7 @@ pub trait ToFile: Serialize + Sized {
             #[cfg(feature = "json")]
             "json" => <Self as crate::ToJson>::write_to_json_file_pretty(self, filename),
             #[cfg(feature = "xml")]
-            "xml" => <Self as crate::ToXml>::write_to_xml_file(self, filename),
+            "xml" => <Self as crate::ToXml>::write_to_xml_file_pretty(self, filename, ' ', 4),
             extension => Err(Error::InvalidExtension(Some(extension.to_string()))),
         }
     }
