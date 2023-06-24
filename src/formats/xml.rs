@@ -4,6 +4,7 @@ pub mod featured {
     use serde::de::DeserializeOwned;
     use serde::Serialize;
     use std::fs::{read_to_string, write};
+    use std::io::Write;
 
     pub trait FromXml: DeserializeOwned {
         /// Deserializes an object from an XML file
@@ -78,6 +79,13 @@ pub mod featured {
     }
 
     pub trait ToXml: Serialize {
+        fn write_xml<W>(&self, writer: W) -> Result<(), Error>
+        where
+            W: Write,
+        {
+            quick_xml::se::to_writer(writer, self)
+                .map_err(|error| Error::SerdeError(error.to_string()))
+        }
         fn to_xml(&self) -> Result<String, Error> {
             quick_xml::se::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
         }
