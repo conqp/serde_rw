@@ -3,7 +3,7 @@ pub mod featured {
     use crate::Error;
     use serde::{Deserialize, Serialize};
     use std::fs::{read_to_string, write};
-    use std::io::Write;
+    use std::io::{BufWriter, Write};
 
     pub trait FromJson: for<'de> Deserialize<'de> {
         /// Deserializes an object from a JSON file
@@ -107,11 +107,33 @@ pub mod featured {
             serde_json::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
         }
 
+        /// Return object as prettified JSON string
+        /// # Errors
+        /// Returns an `serde_rw::Error` in case the serialization fails.
+        fn to_json_pretty(&self) -> Result<String, Error> {
+            let mut writer = BufWriter::new(Vec::new());
+            <Self as ToJson>::write_json_pretty(self, &mut writer)
+                .map_err(|error| Error::SerdeError(error.to_string()))?;
+            String::from_utf8(
+                writer
+                    .into_inner()
+                    .map_err(|error| Error::SerdeError(error.to_string()))?,
+            )
+            .map_err(|error| Error::SerdeError(error.to_string()))
+        }
+
         /// Write object as serialized JSON string to a file
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn write_to_json_file(&self, filename: &str) -> Result<(), Error> {
             write(filename, <Self as ToJson>::to_json(self)?).map_err(Error::FileError)
+        }
+
+        /// Write object as serialized JSON string to a file
+        /// # Errors
+        /// Returns an `serde_rw::Error` in case the serialization fails.
+        fn write_to_json_file_pretty(&self, filename: &str) -> Result<(), Error> {
+            write(filename, <Self as ToJson>::to_json_pretty(self)?).map_err(Error::FileError)
         }
     }
 }

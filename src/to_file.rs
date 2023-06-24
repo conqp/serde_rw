@@ -24,6 +24,22 @@ pub trait ToFile: Serialize + Sized {
             extension => Err(Error::InvalidExtension(Some(extension.to_string()))),
         }
     }
+
+    /// Serializes an object into a prettified file dependent on its file extension
+    /// # Arguments
+    /// * `filename` - The path of the file to be written to
+    ///
+    /// # Errors
+    /// * `serde_rw::Error` - if any serialization or I/O error occur
+    fn write_to_file_pretty(&self, filename: &str) -> Result<(), Error> {
+        match extension(&PathBuf::from(filename))? {
+            #[cfg(feature = "json")]
+            "json" => <Self as crate::ToJson>::write_to_json_file_pretty(self, filename),
+            #[cfg(feature = "xml")]
+            "xml" => <Self as crate::ToXml>::write_to_xml_file(self, filename),
+            _ => <Self as ToFile>::write_to_file(self, filename),
+        }
+    }
 }
 
 impl<T> ToFile for T where T: Serialize {}
