@@ -78,10 +78,16 @@ pub mod featured {
     }
 
     pub trait ToYaml: Serialize {
+        /// Return object as serialized YAML string
+        /// # Errors
+        /// Returns an `serde_rw::Error` in case the serialization fails.
         fn to_yaml(&self) -> Result<String, Error> {
             serde_yaml::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
         }
 
+        /// Writes object as serialized YAML string to a file
+        /// # Errors
+        /// Returns an `serde_rw::Error` in case the serialization fails.
         fn write_to_yaml_file(&self, filename: &str) -> Result<(), Error> {
             write(filename, <Self as ToYaml>::to_yaml(self)?).map_err(Error::FileError)
         }

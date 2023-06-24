@@ -79,6 +79,9 @@ pub mod featured {
     }
 
     pub trait ToXml: Serialize {
+        /// Write object as XML to a `std::fmt::Write`r
+        /// # Errors
+        /// Returns an `serde_rw::Error` in case the serialization fails.
         fn write_xml<W>(&self, writer: W) -> Result<(), Error>
         where
             W: Write,
@@ -86,10 +89,17 @@ pub mod featured {
             quick_xml::se::to_writer(writer, self)
                 .map_err(|error| Error::SerdeError(error.to_string()))
         }
+
+        /// Return object as serialized XML string
+        /// # Errors
+        /// Returns an `serde_rw::Error` in case the serialization fails.
         fn to_xml(&self) -> Result<String, Error> {
             quick_xml::se::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
         }
 
+        /// Writes object as serialized XML string to a file
+        /// # Errors
+        /// Returns an `serde_rw::Error` in case the serialization fails.
         fn write_to_xml_file(&self, filename: &str) -> Result<(), Error> {
             write(filename, <Self as ToXml>::to_xml(self)?).map_err(Error::FileError)
         }

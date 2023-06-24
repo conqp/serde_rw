@@ -79,10 +79,16 @@ pub mod featured {
     }
 
     pub trait ToToml: Serialize {
+        /// Return object as serialized TOML string
+        /// # Errors
+        /// Returns an `serde_rw::Error` in case the serialization fails.
         fn to_toml(&self) -> Result<String, Error> {
             toml::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
         }
 
+        /// Writes object as serialized TOML string to a file
+        /// # Errors
+        /// Returns an `serde_rw::Error` in case the serialization fails.
         fn write_to_toml_file(&self, filename: &str) -> Result<(), Error> {
             write(filename, <Self as ToToml>::to_toml(self)?).map_err(Error::FileError)
         }

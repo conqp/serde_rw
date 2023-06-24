@@ -78,6 +78,9 @@ pub mod featured {
     }
 
     pub trait ToJson: Serialize {
+        /// Write object as JSON to a `std::io::Write`r
+        /// # Errors
+        /// Returns an `serde_rw::Error` in case the serialization fails.
         fn write_json<W>(&self, writer: W) -> Result<(), Error>
         where
             W: Write,
@@ -86,6 +89,9 @@ pub mod featured {
                 .map_err(|error| Error::SerdeError(error.to_string()))
         }
 
+        /// Write object as pretty JSON to a `std::io::Write`
+        /// # Errors
+        /// Returns an `serde_rw::Error` in case the serialization fails.
         fn write_json_pretty<W>(&self, writer: W) -> Result<(), Error>
         where
             W: Write,
@@ -94,10 +100,16 @@ pub mod featured {
                 .map_err(|error| Error::SerdeError(error.to_string()))
         }
 
+        /// Return object as serialized JSON string
+        /// # Errors
+        /// Returns an `serde_rw::Error` in case the serialization fails.
         fn to_json(&self) -> Result<String, Error> {
             serde_json::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
         }
 
+        /// Write object as serialized JSON string to a file
+        /// # Errors
+        /// Returns an `serde_rw::Error` in case the serialization fails.
         fn write_to_json_file(&self, filename: &str) -> Result<(), Error> {
             write(filename, <Self as ToJson>::to_json(self)?).map_err(Error::FileError)
         }
