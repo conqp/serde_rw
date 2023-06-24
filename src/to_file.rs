@@ -10,7 +10,7 @@ pub trait ToFile: Serialize + Sized {
     /// * `filename` - The path of the file to be written to
     ///
     /// # Errors
-    /// * `serde_rw::Error` - if any serialization or I/O error occur
+    /// * `serde_rw::Error` - if any serialization or I/O error occur or the file format is not supported
     fn write_to_file(&self, filename: &str) -> Result<(), Error> {
         match extension(&PathBuf::from(filename))? {
             #[cfg(feature = "json")]
@@ -30,14 +30,14 @@ pub trait ToFile: Serialize + Sized {
     /// * `filename` - The path of the file to be written to
     ///
     /// # Errors
-    /// * `serde_rw::Error` - if any serialization or I/O error occur
+    /// * `serde_rw::Error` - if any serialization or I/O error occur or the file format is not supported
     fn write_to_file_pretty(&self, filename: &str) -> Result<(), Error> {
         match extension(&PathBuf::from(filename))? {
             #[cfg(feature = "json")]
             "json" => <Self as crate::ToJson>::write_to_json_file_pretty(self, filename),
             #[cfg(feature = "xml")]
             "xml" => <Self as crate::ToXml>::write_to_xml_file(self, filename),
-            _ => <Self as ToFile>::write_to_file(self, filename),
+            extension => Err(Error::InvalidExtension(Some(extension.to_string()))),
         }
     }
 }
