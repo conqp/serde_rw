@@ -4,7 +4,7 @@ pub mod featured {
     use serde::{Deserialize, Serialize};
     use std::fs::{read_to_string, write};
 
-    pub trait FromYaml<'de>: Deserialize<'de> {
+    pub trait FromYaml: for<'de> Deserialize<'de> {
         /// Deserializes an object from a YAML file
         /// # Arguments
         /// * `filename` - The path of the YAML file to be read
@@ -14,7 +14,7 @@ pub mod featured {
         ///
         /// # Examples
         /// ```
-        /// use serde_rw::FromFile;
+        /// use serde_rw::FromYaml;
         /// use serde::Deserialize;
         ///
         /// #[derive(Debug, Deserialize, Eq, PartialEq)]
@@ -49,7 +49,7 @@ pub mod featured {
         ///
         /// # Examples
         /// ```
-        /// use serde_rw::FromFile;
+        /// use serde_rw::FromYaml;
         /// use serde::Deserialize;
         ///
         /// #[derive(Debug, Deserialize, Eq, PartialEq)]

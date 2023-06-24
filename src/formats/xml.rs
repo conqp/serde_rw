@@ -16,7 +16,7 @@ pub mod featured {
         ///
         /// # Examples
         /// ```
-        /// use serde_rw::FromFile;
+        /// use serde_rw::FromXml;
         /// use serde::Deserialize;
         ///
         /// #[derive(Debug, Deserialize, Eq, PartialEq)]
@@ -51,7 +51,7 @@ pub mod featured {
         ///
         /// # Examples
         /// ```
-        /// use serde_rw::FromFile;
+        /// use serde_rw::FromXml;
         /// use serde::Deserialize;
         ///
         /// #[derive(Debug, Deserialize, Eq, PartialEq)]

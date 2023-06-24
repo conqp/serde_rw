@@ -5,7 +5,7 @@ pub mod featured {
     use std::fs::{read_to_string, write};
     use std::io::Write;
 
-    pub trait FromJson<'de>: Deserialize<'de> {
+    pub trait FromJson: for<'de> Deserialize<'de> {
         /// Deserializes an object from a JSON file
         /// # Arguments
         /// * `filename` - The path of the JSON file to be read
@@ -15,7 +15,7 @@ pub mod featured {
         ///
         /// # Examples
         /// ```
-        /// use serde_rw::FromFile;
+        /// use serde_rw::FromJson;
         /// use serde::Deserialize;
         ///
         /// #[derive(Debug, Deserialize, Eq, PartialEq)]
@@ -50,7 +50,7 @@ pub mod featured {
         ///
         /// # Examples
         /// ```
-        /// use serde_rw::FromFile;
+        /// use serde_rw::FromJson;
         /// use serde::Deserialize;
         ///
         /// #[derive(Debug, Deserialize, Eq, PartialEq)]

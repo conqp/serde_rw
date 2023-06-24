@@ -29,6 +29,7 @@ where
     /// // Read JSON files with the `json` feature:
     /// #[cfg(feature = "json")]
     /// {
+    ///     use serde_rw::FromJson;
     ///     assert_eq!(
     ///         Person::from_file("./tests/person.json").unwrap(),
     ///         Person {
@@ -41,6 +42,7 @@ where
     /// // Read TOML files with the `toml` feature:
     /// #[cfg(feature = "toml")]
     /// {
+    ///     use serde_rw::FromToml;
     ///     assert_eq!(
     ///         Person::from_file("./tests/person.toml").unwrap(),
     ///         Person {
@@ -53,6 +55,7 @@ where
     /// // Read XML files with the `xml` feature:
     /// #[cfg(feature = "xml")]
     /// {
+    ///     use serde_rw::FromXml;
     ///     assert_eq!(
     ///         Person::from_file("./tests/person.xml").unwrap(),
     ///         Person {
@@ -65,6 +68,7 @@ where
     /// // Read YAML files with the `yaml` feature:
     /// #[cfg(feature = "yaml")]
     /// {
+    ///     use serde_rw::FromYaml;
     ///     assert_eq!(
     ///         Person::from_file("./tests/person.yml").unwrap(),
     ///         Person {
@@ -92,10 +96,10 @@ where
 impl<T> FromFile for T where T: for<'de> Deserialize<'de> {}
 
 #[cfg(feature = "json")]
-impl<'de, T> crate::FromJson<'de> for T where T: FromFile {}
+impl<T> crate::FromJson for T where T: FromFile {}
 #[cfg(feature = "toml")]
 impl<T> crate::FromToml for T where T: FromFile {}
 #[cfg(feature = "xml")]
 impl<T> crate::FromXml for T where T: FromFile {}
 #[cfg(feature = "yaml")]
-impl<'de, T> crate::FromYaml<'de> for T where T: FromFile {}
+impl<T> crate::FromYaml for T where T: FromFile {}
