@@ -1,8 +1,7 @@
 #[cfg(feature = "xml")]
 pub mod featured {
     use crate::Error;
-    use quick_xml::events::Event;
-    use quick_xml::{Reader, Writer};
+    use quick_xml::se::Serializer;
     use serde::de::DeserializeOwned;
     use serde::Serialize;
     use std::fmt::Write;
@@ -103,27 +102,12 @@ pub mod featured {
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn to_xml_pretty(&self, indent_char: char, indent_size: usize) -> Result<String, Error> {
-            let xml = self.to_xml()?;
-            let mut reader = Reader::from_str(&xml);
-            reader.trim_text(true);
-            let mut writer = Writer::new_with_indent(Vec::new(), indent_char as u8, indent_size);
-
-            loop {
-                let ev = reader.read_event();
-
-                match ev {
-                    Ok(Event::Eof) => break,
-                    Ok(event) => {
-                        if let Err(error) = writer.write_event(event) {
-                            return Err(Error::SerdeError(error.to_string()));
-                        }
-                    }
-                    Err(e) => return Err(Error::SerdeError(e.to_string())),
-                }
-            }
-
-            String::from_utf8(writer.into_inner())
-                .map_err(|error| Error::SerdeError(error.to_string()))
+            let mut buffer = String::new();
+            let mut serializer = Serializer::new(&mut buffer);
+            serializer.indent(indent_char, indent_size);
+            self.serialize(serializer)
+                .map_err(|error| Error::SerdeError(error.to_string()))?;
+            Ok(buffer)
         }
 
         /// Writes object as serialized XML string to a file
