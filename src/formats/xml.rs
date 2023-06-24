@@ -132,5 +132,21 @@ pub mod featured {
         fn write_to_xml_file(&self, filename: &str) -> Result<(), Error> {
             write(filename, <Self as ToXml>::to_xml(self)?).map_err(Error::FileError)
         }
+
+        /// Writes object as a pretty serialized XML string to a file
+        /// # Errors
+        /// Returns an `serde_rw::Error` in case the serialization fails.
+        fn write_to_xml_file_pretty(
+            &self,
+            filename: &str,
+            indent_char: u8,
+            indent_size: usize,
+        ) -> Result<(), Error> {
+            write(
+                filename,
+                <Self as ToXml>::to_xml_pretty(self, indent_char, indent_size)?,
+            )
+            .map_err(Error::FileError)
+        }
     }
 }
