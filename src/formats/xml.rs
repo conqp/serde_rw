@@ -102,11 +102,11 @@ pub mod featured {
         /// Return object as a pretty serialized XML string
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn to_xml_pretty(&self, indent_char: u8, indent_size: usize) -> Result<String, Error> {
+        fn to_xml_pretty(&self, indent_char: char, indent_size: usize) -> Result<String, Error> {
             let xml = self.to_xml()?;
             let mut reader = Reader::from_str(&xml);
             reader.trim_text(true);
-            let mut writer = Writer::new_with_indent(Vec::new(), indent_char, indent_size);
+            let mut writer = Writer::new_with_indent(Vec::new(), indent_char as u8, indent_size);
 
             loop {
                 let ev = reader.read_event();
@@ -139,7 +139,7 @@ pub mod featured {
         fn write_to_xml_file_pretty(
             &self,
             filename: &str,
-            indent_char: u8,
+            indent_char: char,
             indent_size: usize,
         ) -> Result<(), Error> {
             write(
