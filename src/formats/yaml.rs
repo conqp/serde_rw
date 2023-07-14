@@ -37,7 +37,7 @@ pub mod featured {
         /// ```
         fn from_yaml_file(filename: impl AsRef<Path>) -> Result<Self, Error> {
             read_to_string(filename)
-                .map_err(Error::FileError)
+                .map_err(Error::IoError)
                 .and_then(|text| <Self as FromYaml>::from_yaml_string(&text))
         }
 
@@ -90,7 +90,7 @@ pub mod featured {
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn write_to_yaml_file(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
-            write(filename, <Self as ToYaml>::to_yaml(self)?).map_err(Error::FileError)
+            write(filename, <Self as ToYaml>::to_yaml(self)?).map_err(Error::IoError)
         }
     }
 }

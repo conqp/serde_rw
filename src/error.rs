@@ -3,7 +3,7 @@ use std::fmt::{Display, Formatter};
 
 #[derive(Debug)]
 pub enum Error {
-    FileError(std::io::Error),
+    IoError(std::io::Error),
     InvalidExtension(Option<String>),
     SerializationError(Box<dyn ser::StdError>),
     DeserializationError(Box<dyn de::StdError>),
@@ -12,7 +12,7 @@ pub enum Error {
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::FileError(error) => write!(f, "{error}"),
+            Self::IoError(error) => write!(f, "{error}"),
             Self::InvalidExtension(string) => write!(
                 f,
                 r#"Invalid extension: "{}""#,

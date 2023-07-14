@@ -40,7 +40,7 @@ pub mod featured {
         /// ```
         fn from_xml_file(filename: impl AsRef<Path>) -> Result<Self, Error> {
             read_to_string(filename)
-                .map_err(Error::FileError)
+                .map_err(Error::IoError)
                 .and_then(|text| <Self as FromXml>::from_xml_string(&text))
         }
 
@@ -115,7 +115,7 @@ pub mod featured {
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn write_to_xml_file(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
-            write(filename, <Self as ToXml>::to_xml(self)?).map_err(Error::FileError)
+            write(filename, <Self as ToXml>::to_xml(self)?).map_err(Error::IoError)
         }
 
         /// Writes object as a pretty serialized XML string to a file
@@ -131,7 +131,7 @@ pub mod featured {
                 filename,
                 <Self as ToXml>::to_xml_pretty(self, indent_char, indent_size)?,
             )
-            .map_err(Error::FileError)
+            .map_err(Error::IoError)
         }
     }
 }
