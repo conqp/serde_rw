@@ -4,6 +4,7 @@ pub mod featured {
     use serde::{Deserialize, Serialize};
     use std::fs::{read_to_string, write};
     use std::io::{BufWriter, Write};
+    use std::path::Path;
 
     pub trait FromJson: for<'de> Deserialize<'de> {
         /// Deserializes an object from a JSON file
@@ -35,7 +36,7 @@ pub mod featured {
         ///     );
         /// }
         /// ```
-        fn from_json_file(filename: &str) -> Result<Self, Error> {
+        fn from_json_file(filename: impl AsRef<Path>) -> Result<Self, Error> {
             read_to_string(filename)
                 .map_err(Error::FileError)
                 .and_then(|text| <Self as FromJson>::from_json_string(&text))
@@ -125,14 +126,14 @@ pub mod featured {
         /// Write object as serialized JSON string to a file
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn write_to_json_file(&self, filename: &str) -> Result<(), Error> {
+        fn write_to_json_file(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
             write(filename, <Self as ToJson>::to_json(self)?).map_err(Error::FileError)
         }
 
         /// Write object as serialized JSON string to a file
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn write_to_json_file_pretty(&self, filename: &str) -> Result<(), Error> {
+        fn write_to_json_file_pretty(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
             write(filename, <Self as ToJson>::to_json_pretty(self)?).map_err(Error::FileError)
         }
     }

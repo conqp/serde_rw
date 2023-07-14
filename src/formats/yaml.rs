@@ -3,6 +3,7 @@ pub mod featured {
     use crate::Error;
     use serde::{Deserialize, Serialize};
     use std::fs::{read_to_string, write};
+    use std::path::Path;
 
     pub trait FromYaml: for<'de> Deserialize<'de> {
         /// Deserializes an object from a YAML file
@@ -34,7 +35,7 @@ pub mod featured {
         ///     );
         /// }
         /// ```
-        fn from_yaml_file(filename: &str) -> Result<Self, Error> {
+        fn from_yaml_file(filename: impl AsRef<Path>) -> Result<Self, Error> {
             read_to_string(filename)
                 .map_err(Error::FileError)
                 .and_then(|text| <Self as FromYaml>::from_yaml_string(&text))
@@ -88,7 +89,7 @@ pub mod featured {
         /// Writes object as serialized YAML string to a file
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn write_to_yaml_file(&self, filename: &str) -> Result<(), Error> {
+        fn write_to_yaml_file(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
             write(filename, <Self as ToYaml>::to_yaml(self)?).map_err(Error::FileError)
         }
     }

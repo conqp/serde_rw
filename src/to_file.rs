@@ -1,7 +1,7 @@
 use crate::functions::extension;
 use crate::Error;
 use serde::Serialize;
-use std::path::PathBuf;
+use std::path::Path;
 
 /// Makes an object capable of writing itself to a file of a specified format
 pub trait ToFile: Serialize + Sized {
@@ -11,8 +11,8 @@ pub trait ToFile: Serialize + Sized {
     ///
     /// # Errors
     /// * `serde_rw::Error` - if any serialization or I/O error occur or the file format is not supported
-    fn write_to_file(&self, filename: &str) -> Result<(), Error> {
-        match extension(&PathBuf::from(filename))? {
+    fn write_to_file(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
+        match extension(filename.as_ref())? {
             #[cfg(feature = "json")]
             "json" => <Self as crate::ToJson>::write_to_json_file(self, filename),
             #[cfg(feature = "toml")]
@@ -31,8 +31,8 @@ pub trait ToFile: Serialize + Sized {
     ///
     /// # Errors
     /// * `serde_rw::Error` - if any serialization or I/O error occur or the file format is not supported
-    fn write_to_file_pretty(&self, filename: &str) -> Result<(), Error> {
-        match extension(&PathBuf::from(filename))? {
+    fn write_to_file_pretty(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
+        match extension(filename.as_ref())? {
             #[cfg(feature = "json")]
             "json" => <Self as crate::ToJson>::write_to_json_file_pretty(self, filename),
             #[cfg(feature = "xml")]

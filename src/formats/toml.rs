@@ -4,6 +4,7 @@ pub mod featured {
     use serde::de::DeserializeOwned;
     use serde::Serialize;
     use std::fs::{read_to_string, write};
+    use std::path::Path;
 
     pub trait FromToml: DeserializeOwned {
         /// Deserializes an object from a TOML file
@@ -35,7 +36,7 @@ pub mod featured {
         ///     );
         /// }
         /// ```
-        fn from_toml_file(filename: &str) -> Result<Self, Error> {
+        fn from_toml_file(filename: impl AsRef<Path>) -> Result<Self, Error> {
             read_to_string(filename)
                 .map_err(Error::FileError)
                 .and_then(|text| <Self as FromToml>::from_toml_string(&text))
@@ -89,7 +90,7 @@ pub mod featured {
         /// Writes object as serialized TOML string to a file
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn write_to_toml_file(&self, filename: &str) -> Result<(), Error> {
+        fn write_to_toml_file(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
             write(filename, <Self as ToToml>::to_toml(self)?).map_err(Error::FileError)
         }
     }

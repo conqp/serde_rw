@@ -1,7 +1,7 @@
 use crate::functions::extension;
 use crate::Error;
 use serde::Deserialize;
-use std::path::PathBuf;
+use std::path::Path;
 
 /// Makes an object capable of reading itself from a file of a specified format
 pub trait FromFile
@@ -78,8 +78,8 @@ where
     ///     );
     /// }
     /// ```
-    fn from_file(filename: &str) -> Result<Self, Error> {
-        match extension(&PathBuf::from(filename))? {
+    fn from_file(filename: impl AsRef<Path>) -> Result<Self, Error> {
+        match extension(filename.as_ref())? {
             #[cfg(feature = "json")]
             "json" => <Self as crate::FromJson>::from_json_file(filename),
             #[cfg(feature = "toml")]

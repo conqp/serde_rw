@@ -6,6 +6,7 @@ pub mod featured {
     use serde::Serialize;
     use std::fmt::Write;
     use std::fs::{read_to_string, write};
+    use std::path::Path;
 
     pub trait FromXml: DeserializeOwned {
         /// Deserializes an object from an XML file
@@ -37,7 +38,7 @@ pub mod featured {
         ///     );
         /// }
         /// ```
-        fn from_xml_file(filename: &str) -> Result<Self, Error> {
+        fn from_xml_file(filename: impl AsRef<Path>) -> Result<Self, Error> {
             read_to_string(filename)
                 .map_err(Error::FileError)
                 .and_then(|text| <Self as FromXml>::from_xml_string(&text))
@@ -113,7 +114,7 @@ pub mod featured {
         /// Writes object as serialized XML string to a file
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn write_to_xml_file(&self, filename: &str) -> Result<(), Error> {
+        fn write_to_xml_file(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
             write(filename, <Self as ToXml>::to_xml(self)?).map_err(Error::FileError)
         }
 
@@ -122,7 +123,7 @@ pub mod featured {
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn write_to_xml_file_pretty(
             &self,
-            filename: &str,
+            filename: impl AsRef<Path>,
             indent_char: char,
             indent_size: usize,
         ) -> Result<(), Error> {
