@@ -74,7 +74,7 @@ pub mod featured {
         /// }
         /// ```
         fn from_json_string(text: &str) -> Result<Self, Error> {
-            serde_json::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
+            serde_json::from_str(text).map_err(|error| Error::DeserializationError(error.into()))
         }
     }
 
@@ -87,7 +87,7 @@ pub mod featured {
             W: Write,
         {
             serde_json::to_writer(writer, self)
-                .map_err(|error| Error::SerdeError(error.to_string()))
+                .map_err(|error| Error::SerializationError(error.into()))
         }
 
         /// Write object as pretty JSON to a `std::io::Write`
@@ -98,14 +98,14 @@ pub mod featured {
             W: Write,
         {
             serde_json::to_writer_pretty(writer, self)
-                .map_err(|error| Error::SerdeError(error.to_string()))
+                .map_err(|error| Error::SerializationError(error.into()))
         }
 
         /// Return object as serialized JSON string
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn to_json(&self) -> Result<String, Error> {
-            serde_json::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
+            serde_json::to_string(self).map_err(|error| Error::SerializationError(error.into()))
         }
 
         /// Return object as prettified JSON string
@@ -113,14 +113,13 @@ pub mod featured {
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn to_json_pretty(&self) -> Result<String, Error> {
             let mut writer = BufWriter::new(Vec::new());
-            <Self as ToJson>::write_json_pretty(self, &mut writer)
-                .map_err(|error| Error::SerdeError(error.to_string()))?;
+            <Self as ToJson>::write_json_pretty(self, &mut writer)?;
             String::from_utf8(
                 writer
                     .into_inner()
-                    .map_err(|error| Error::SerdeError(error.to_string()))?,
+                    .map_err(|error| Error::SerializationError(error.into()))?,
             )
-            .map_err(|error| Error::SerdeError(error.to_string()))
+            .map_err(|error| Error::SerializationError(error.into()))
         }
 
         /// Write object as serialized JSON string to a file

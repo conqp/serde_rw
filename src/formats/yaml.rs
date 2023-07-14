@@ -74,7 +74,7 @@ pub mod featured {
         /// }
         /// ```
         fn from_yaml_string(text: &str) -> Result<Self, Error> {
-            serde_yaml::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
+            serde_yaml::from_str(text).map_err(|error| Error::DeserializationError(error.into()))
         }
     }
 
@@ -83,7 +83,7 @@ pub mod featured {
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn to_yaml(&self) -> Result<String, Error> {
-            serde_yaml::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
+            serde_yaml::to_string(self).map_err(|error| Error::SerializationError(error.into()))
         }
 
         /// Writes object as serialized YAML string to a file

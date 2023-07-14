@@ -75,7 +75,7 @@ pub mod featured {
         /// }
         /// ```
         fn from_toml_string(text: &str) -> Result<Self, Error> {
-            toml::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
+            toml::from_str(text).map_err(|error| Error::DeserializationError(error.into()))
         }
     }
 
@@ -84,7 +84,7 @@ pub mod featured {
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn to_toml(&self) -> Result<String, Error> {
-            toml::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
+            toml::to_string(self).map_err(|error| Error::SerializationError(error.into()))
         }
 
         /// Writes object as serialized TOML string to a file

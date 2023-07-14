@@ -76,7 +76,7 @@ pub mod featured {
         /// }
         /// ```
         fn from_xml_string(text: &str) -> Result<Self, Error> {
-            quick_xml::de::from_str(text).map_err(|error| Error::SerdeError(error.to_string()))
+            quick_xml::de::from_str(text).map_err(|error| Error::DeserializationError(error.into()))
         }
     }
 
@@ -89,14 +89,14 @@ pub mod featured {
             W: Write,
         {
             quick_xml::se::to_writer(writer, self)
-                .map_err(|error| Error::SerdeError(error.to_string()))
+                .map_err(|error| Error::SerializationError(error.into()))
         }
 
         /// Return object as serialized XML string
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn to_xml(&self) -> Result<String, Error> {
-            quick_xml::se::to_string(self).map_err(|error| Error::SerdeError(error.to_string()))
+            quick_xml::se::to_string(self).map_err(|error| Error::SerializationError(error.into()))
         }
 
         /// Return object as a pretty serialized XML string
@@ -107,7 +107,7 @@ pub mod featured {
             let mut serializer = Serializer::new(&mut buffer);
             serializer.indent(indent_char, indent_size);
             self.serialize(serializer)
-                .map_err(|error| Error::SerdeError(error.to_string()))?;
+                .map_err(|error| Error::SerializationError(error.into()))?;
             Ok(buffer)
         }
 

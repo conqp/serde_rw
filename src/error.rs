@@ -1,10 +1,12 @@
+use serde::{de, ser};
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug)]
 pub enum Error {
     FileError(std::io::Error),
     InvalidExtension(Option<String>),
-    SerdeError(String),
+    SerializationError(Box<dyn ser::StdError>),
+    DeserializationError(Box<dyn de::StdError>),
 }
 
 impl Display for Error {
@@ -16,7 +18,9 @@ impl Display for Error {
                 r#"Invalid extension: "{}""#,
                 string.as_deref().unwrap_or("")
             ),
-            Self::SerdeError(message) => write!(f, "{message}"),
+            Self::SerializationError(error) | Self::DeserializationError(error) => {
+                write!(f, "{error}")
+            }
         }
     }
 }
