@@ -3,7 +3,6 @@ name = "serde_rw"
 authors = ["Richard Neumann <mail@richard-neumann.de>"]
 description = "Extend serde serializers and deserializers with the ability to read / write different file formats from / to files"
 license = "MIT"
-license-file = "LICENSE"
 homepage = "https://github.com/conqp/serde_rw/"
 repository = "https://github.com/conqp/serde_rw/"
 readme = "README.md"
