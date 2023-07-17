@@ -36,9 +36,7 @@ pub mod featured {
         /// }
         /// ```
         fn from_yaml_file(filename: impl AsRef<Path>) -> Result<Self, Error> {
-            read_to_string(filename)
-                .map_err(Error::IoError)
-                .and_then(|text| <Self as FromYaml>::from_yaml_string(&text))
+            <Self as FromYaml>::from_yaml_string(&read_to_string(filename)?)
         }
 
         /// Deserializes an object from a YAML string
@@ -74,7 +72,7 @@ pub mod featured {
         /// }
         /// ```
         fn from_yaml_string(text: &str) -> Result<Self, Error> {
-            serde_yaml::from_str(text).map_err(|error| Error::DeserializationError(error.into()))
+            Ok(serde_yaml::from_str(text)?)
         }
     }
 
@@ -83,14 +81,14 @@ pub mod featured {
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn to_yaml(&self) -> Result<String, Error> {
-            serde_yaml::to_string(self).map_err(|error| Error::SerializationError(error.into()))
+            Ok(serde_yaml::to_string(self)?)
         }
 
         /// Writes object as serialized YAML string to a file
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn write_to_yaml_file(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
-            write(filename, <Self as ToYaml>::to_yaml(self)?).map_err(Error::IoError)
+            Ok(write(filename, <Self as ToYaml>::to_yaml(self)?)?)
         }
     }
 }

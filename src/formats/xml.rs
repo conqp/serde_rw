@@ -39,9 +39,7 @@ pub mod featured {
         /// }
         /// ```
         fn from_xml_file(filename: impl AsRef<Path>) -> Result<Self, Error> {
-            read_to_string(filename)
-                .map_err(Error::IoError)
-                .and_then(|text| <Self as FromXml>::from_xml_string(&text))
+            <Self as FromXml>::from_xml_string(&read_to_string(filename)?)
         }
 
         /// Deserializes an object from an XML string
@@ -76,7 +74,7 @@ pub mod featured {
         /// }
         /// ```
         fn from_xml_string(text: &str) -> Result<Self, Error> {
-            quick_xml::de::from_str(text).map_err(|error| Error::DeserializationError(error.into()))
+            Ok(quick_xml::de::from_str(text)?)
         }
     }
 
@@ -88,15 +86,14 @@ pub mod featured {
         where
             W: Write,
         {
-            quick_xml::se::to_writer(writer, self)
-                .map_err(|error| Error::SerializationError(error.into()))
+            Ok(quick_xml::se::to_writer(writer, self)?)
         }
 
         /// Return object as serialized XML string
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn to_xml(&self) -> Result<String, Error> {
-            quick_xml::se::to_string(self).map_err(|error| Error::SerializationError(error.into()))
+            Ok(quick_xml::se::to_string(self)?)
         }
 
         /// Return object as a pretty serialized XML string
@@ -106,8 +103,7 @@ pub mod featured {
             let mut buffer = String::new();
             let mut serializer = Serializer::new(&mut buffer);
             serializer.indent(indent_char, indent_size);
-            self.serialize(serializer)
-                .map_err(|error| Error::SerializationError(error.into()))?;
+            self.serialize(serializer)?;
             Ok(buffer)
         }
 
@@ -115,7 +111,7 @@ pub mod featured {
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn write_to_xml_file(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
-            write(filename, <Self as ToXml>::to_xml(self)?).map_err(Error::IoError)
+            Ok(write(filename, <Self as ToXml>::to_xml(self)?)?)
         }
 
         /// Writes object as a pretty serialized XML string to a file
@@ -127,11 +123,10 @@ pub mod featured {
             indent_char: char,
             indent_size: usize,
         ) -> Result<(), Error> {
-            write(
+            Ok(write(
                 filename,
                 <Self as ToXml>::to_xml_pretty(self, indent_char, indent_size)?,
-            )
-            .map_err(Error::IoError)
+            )?)
         }
     }
 }

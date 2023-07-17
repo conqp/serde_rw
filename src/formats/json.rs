@@ -37,9 +37,7 @@ pub mod featured {
         /// }
         /// ```
         fn from_json_file(filename: impl AsRef<Path>) -> Result<Self, Error> {
-            read_to_string(filename)
-                .map_err(Error::IoError)
-                .and_then(|text| <Self as FromJson>::from_json_string(&text))
+            <Self as FromJson>::from_json_string(&read_to_string(filename)?)
         }
 
         /// Deserializes an object from a JSON string
@@ -74,7 +72,7 @@ pub mod featured {
         /// }
         /// ```
         fn from_json_string(text: &str) -> Result<Self, Error> {
-            serde_json::from_str(text).map_err(|error| Error::DeserializationError(error.into()))
+            Ok(serde_json::from_str(text)?)
         }
     }
 
@@ -86,8 +84,7 @@ pub mod featured {
         where
             W: Write,
         {
-            serde_json::to_writer(writer, self)
-                .map_err(|error| Error::SerializationError(error.into()))
+            Ok(serde_json::to_writer(writer, self)?)
         }
 
         /// Write object as pretty JSON to a `std::io::Write`
@@ -97,15 +94,14 @@ pub mod featured {
         where
             W: Write,
         {
-            serde_json::to_writer_pretty(writer, self)
-                .map_err(|error| Error::SerializationError(error.into()))
+            Ok(serde_json::to_writer_pretty(writer, self)?)
         }
 
         /// Return object as serialized JSON string
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn to_json(&self) -> Result<String, Error> {
-            serde_json::to_string(self).map_err(|error| Error::SerializationError(error.into()))
+            Ok(serde_json::to_string(self)?)
         }
 
         /// Return object as prettified JSON string
@@ -114,26 +110,21 @@ pub mod featured {
         fn to_json_pretty(&self) -> Result<String, Error> {
             let mut writer = BufWriter::new(Vec::new());
             <Self as ToJson>::write_json_pretty(self, &mut writer)?;
-            String::from_utf8(
-                writer
-                    .into_inner()
-                    .map_err(|error| Error::SerializationError(error.into()))?,
-            )
-            .map_err(|error| Error::SerializationError(error.into()))
+            Ok(String::from_utf8(writer.into_inner()?)?)
         }
 
         /// Write object as serialized JSON string to a file
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn write_to_json_file(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
-            write(filename, <Self as ToJson>::to_json(self)?).map_err(Error::IoError)
+            Ok(write(filename, <Self as ToJson>::to_json(self)?)?)
         }
 
         /// Write object as serialized JSON string to a file
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
         fn write_to_json_file_pretty(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
-            write(filename, <Self as ToJson>::to_json_pretty(self)?).map_err(Error::IoError)
+            Ok(write(filename, <Self as ToJson>::to_json_pretty(self)?)?)
         }
     }
 }
