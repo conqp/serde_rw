@@ -1,5 +1,4 @@
 use crate::functions::extension;
-use crate::Error;
 use serde::Deserialize;
 use std::path::Path;
 
@@ -78,7 +77,7 @@ where
     ///     );
     /// }
     /// ```
-    fn from_file(filename: impl AsRef<Path>) -> Result<Self, Error> {
+    fn from_file(filename: impl AsRef<Path>) -> anyhow::Result<Self> {
         match extension(filename.as_ref())? {
             #[cfg(feature = "json")]
             "json" => <Self as crate::FromJson>::from_json_file(filename),
@@ -88,7 +87,9 @@ where
             "xml" => <Self as crate::FromXml>::from_xml_file(filename),
             #[cfg(feature = "yaml")]
             "yml" | "yaml" => <Self as crate::FromYaml>::from_yaml_file(filename),
-            extension => Err(Error::InvalidExtension(Some(extension.to_string()))),
+            extension => Err(anyhow::Error::msg(format!(
+                "Unsupported extension: '{extension}'",
+            ))),
         }
     }
 }

@@ -1,6 +1,5 @@
 #[cfg(feature = "json")]
 pub mod featured {
-    use crate::Error;
     use serde::{Deserialize, Serialize};
     use std::fs::{read_to_string, write};
     use std::io::{BufWriter, Write};
@@ -36,7 +35,7 @@ pub mod featured {
         ///     );
         /// }
         /// ```
-        fn from_json_file(filename: impl AsRef<Path>) -> Result<Self, Error> {
+        fn from_json_file(filename: impl AsRef<Path>) -> anyhow::Result<Self> {
             <Self as FromJson>::from_json_string(&read_to_string(filename)?)
         }
 
@@ -71,7 +70,7 @@ pub mod featured {
         ///     );
         /// }
         /// ```
-        fn from_json_string(text: &str) -> Result<Self, Error> {
+        fn from_json_string(text: &str) -> anyhow::Result<Self> {
             Ok(serde_json::from_str(text)?)
         }
     }
@@ -80,7 +79,7 @@ pub mod featured {
         /// Write object as JSON to a `std::io::Write`r
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn write_json<W>(&self, writer: W) -> Result<(), Error>
+        fn write_json<W>(&self, writer: W) -> anyhow::Result<()>
         where
             W: Write,
         {
@@ -90,7 +89,7 @@ pub mod featured {
         /// Write object as pretty JSON to a `std::io::Write`
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn write_json_pretty<W>(&self, writer: W) -> Result<(), Error>
+        fn write_json_pretty<W>(&self, writer: W) -> anyhow::Result<()>
         where
             W: Write,
         {
@@ -100,14 +99,14 @@ pub mod featured {
         /// Return object as serialized JSON string
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn to_json(&self) -> Result<String, Error> {
+        fn to_json(&self) -> anyhow::Result<String> {
             Ok(serde_json::to_string(self)?)
         }
 
         /// Return object as prettified JSON string
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn to_json_pretty(&self) -> Result<String, Error> {
+        fn to_json_pretty(&self) -> anyhow::Result<String> {
             let mut writer = BufWriter::new(Vec::new());
             <Self as ToJson>::write_json_pretty(self, &mut writer)?;
             Ok(String::from_utf8(writer.into_inner()?)?)
@@ -116,14 +115,14 @@ pub mod featured {
         /// Write object as serialized JSON string to a file
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn write_to_json_file(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
+        fn write_to_json_file(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
             Ok(write(filename, <Self as ToJson>::to_json(self)?)?)
         }
 
         /// Write object as serialized JSON string to a file
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn write_to_json_file_pretty(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
+        fn write_to_json_file_pretty(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
             Ok(write(filename, <Self as ToJson>::to_json_pretty(self)?)?)
         }
     }

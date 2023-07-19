@@ -1,6 +1,5 @@
 #[cfg(feature = "xml")]
 pub mod featured {
-    use crate::Error;
     use quick_xml::se::Serializer;
     use serde::de::DeserializeOwned;
     use serde::Serialize;
@@ -38,7 +37,7 @@ pub mod featured {
         ///     );
         /// }
         /// ```
-        fn from_xml_file(filename: impl AsRef<Path>) -> Result<Self, Error> {
+        fn from_xml_file(filename: impl AsRef<Path>) -> anyhow::Result<Self> {
             <Self as FromXml>::from_xml_string(&read_to_string(filename)?)
         }
 
@@ -73,7 +72,7 @@ pub mod featured {
         ///     );
         /// }
         /// ```
-        fn from_xml_string(text: &str) -> Result<Self, Error> {
+        fn from_xml_string(text: &str) -> anyhow::Result<Self> {
             Ok(quick_xml::de::from_str(text)?)
         }
     }
@@ -82,7 +81,7 @@ pub mod featured {
         /// Write object as XML to a `std::fmt::Write`r
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn write_xml<W>(&self, writer: W) -> Result<(), Error>
+        fn write_xml<W>(&self, writer: W) -> anyhow::Result<()>
         where
             W: Write,
         {
@@ -92,14 +91,14 @@ pub mod featured {
         /// Return object as serialized XML string
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn to_xml(&self) -> Result<String, Error> {
+        fn to_xml(&self) -> anyhow::Result<String> {
             Ok(quick_xml::se::to_string(self)?)
         }
 
         /// Return object as a pretty serialized XML string
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn to_xml_pretty(&self, indent_char: char, indent_size: usize) -> Result<String, Error> {
+        fn to_xml_pretty(&self, indent_char: char, indent_size: usize) -> anyhow::Result<String> {
             let mut buffer = String::new();
             let mut serializer = Serializer::new(&mut buffer);
             serializer.indent(indent_char, indent_size);
@@ -110,7 +109,7 @@ pub mod featured {
         /// Writes object as serialized XML string to a file
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn write_to_xml_file(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
+        fn write_to_xml_file(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
             Ok(write(filename, <Self as ToXml>::to_xml(self)?)?)
         }
 
@@ -122,7 +121,7 @@ pub mod featured {
             filename: impl AsRef<Path>,
             indent_char: char,
             indent_size: usize,
-        ) -> Result<(), Error> {
+        ) -> anyhow::Result<()> {
             Ok(write(
                 filename,
                 <Self as ToXml>::to_xml_pretty(self, indent_char, indent_size)?,

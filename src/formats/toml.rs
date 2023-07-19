@@ -1,6 +1,5 @@
 #[cfg(feature = "toml")]
 pub mod featured {
-    use crate::Error;
     use serde::de::DeserializeOwned;
     use serde::Serialize;
     use std::fs::{read_to_string, write};
@@ -36,7 +35,7 @@ pub mod featured {
         ///     );
         /// }
         /// ```
-        fn from_toml_file(filename: impl AsRef<Path>) -> Result<Self, Error> {
+        fn from_toml_file(filename: impl AsRef<Path>) -> anyhow::Result<Self> {
             <Self as FromToml>::from_toml_string(&read_to_string(filename)?)
         }
 
@@ -72,7 +71,7 @@ pub mod featured {
         ///     );
         /// }
         /// ```
-        fn from_toml_string(text: &str) -> Result<Self, Error> {
+        fn from_toml_string(text: &str) -> anyhow::Result<Self> {
             Ok(toml::from_str(text)?)
         }
     }
@@ -81,14 +80,14 @@ pub mod featured {
         /// Return object as serialized TOML string
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn to_toml(&self) -> Result<String, Error> {
+        fn to_toml(&self) -> anyhow::Result<String> {
             Ok(toml::to_string(self)?)
         }
 
         /// Writes object as serialized TOML string to a file
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn write_to_toml_file(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
+        fn write_to_toml_file(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
             Ok(write(filename, <Self as ToToml>::to_toml(self)?)?)
         }
     }

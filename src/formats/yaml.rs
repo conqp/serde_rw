@@ -1,6 +1,5 @@
 #[cfg(feature = "yaml")]
 pub mod featured {
-    use crate::Error;
     use serde::{Deserialize, Serialize};
     use std::fs::{read_to_string, write};
     use std::path::Path;
@@ -35,7 +34,7 @@ pub mod featured {
         ///     );
         /// }
         /// ```
-        fn from_yaml_file(filename: impl AsRef<Path>) -> Result<Self, Error> {
+        fn from_yaml_file(filename: impl AsRef<Path>) -> anyhow::Result<Self> {
             <Self as FromYaml>::from_yaml_string(&read_to_string(filename)?)
         }
 
@@ -71,7 +70,7 @@ pub mod featured {
         ///     );
         /// }
         /// ```
-        fn from_yaml_string(text: &str) -> Result<Self, Error> {
+        fn from_yaml_string(text: &str) -> anyhow::Result<Self> {
             Ok(serde_yaml::from_str(text)?)
         }
     }
@@ -80,14 +79,14 @@ pub mod featured {
         /// Return object as serialized YAML string
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn to_yaml(&self) -> Result<String, Error> {
+        fn to_yaml(&self) -> anyhow::Result<String> {
             Ok(serde_yaml::to_string(self)?)
         }
 
         /// Writes object as serialized YAML string to a file
         /// # Errors
         /// Returns an `serde_rw::Error` in case the serialization fails.
-        fn write_to_yaml_file(&self, filename: impl AsRef<Path>) -> Result<(), Error> {
+        fn write_to_yaml_file(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
             Ok(write(filename, <Self as ToYaml>::to_yaml(self)?)?)
         }
     }

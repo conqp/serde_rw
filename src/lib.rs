@@ -1,10 +1,8 @@
-mod error;
 mod formats;
 mod from_file;
 mod functions;
 mod to_file;
 
-pub use error::Error;
 pub use from_file::FromFile;
 pub use to_file::ToFile;
 
