@@ -28,7 +28,7 @@ where
     /// // Read JSON files with the `json` feature:
     /// #[cfg(feature = "json")]
     /// {
-    ///     use serde_rw::FromJson;
+    ///     use serde_rw::FromFile;
     ///     assert_eq!(
     ///         Person::from_file("./tests/person.json").unwrap(),
     ///         Person {
@@ -41,7 +41,7 @@ where
     /// // Read TOML files with the `toml` feature:
     /// #[cfg(feature = "toml")]
     /// {
-    ///     use serde_rw::FromToml;
+    ///     use serde_rw::FromFile;
     ///     assert_eq!(
     ///         Person::from_file("./tests/person.toml").unwrap(),
     ///         Person {
@@ -54,7 +54,7 @@ where
     /// // Read XML files with the `xml` feature:
     /// #[cfg(feature = "xml")]
     /// {
-    ///     use serde_rw::FromXml;
+    ///     use serde_rw::FromFile;
     ///     assert_eq!(
     ///         Person::from_file("./tests/person.xml").unwrap(),
     ///         Person {
@@ -67,7 +67,7 @@ where
     /// // Read YAML files with the `yaml` feature:
     /// #[cfg(feature = "yaml")]
     /// {
-    ///     use serde_rw::FromYaml;
+    ///     use serde_rw::FromFile;
     ///     assert_eq!(
     ///         Person::from_file("./tests/person.yml").unwrap(),
     ///         Person {
