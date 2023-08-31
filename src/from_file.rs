@@ -8,11 +8,12 @@ where
     for<'de> Self: Deserialize<'de>,
 {
     /// Deserializes an object from a file dependent on its file extension
+    ///
     /// # Arguments
     /// * `filename` - The path of the file to be read
     ///
     /// # Errors
-    /// * `serde_rw::Error` - If the file could not be read
+    /// * `anyhow::Error` - If the file could not be read
     ///
     /// # Examples
     /// ```

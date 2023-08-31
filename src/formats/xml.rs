@@ -9,11 +9,12 @@ pub mod featured {
 
     pub trait FromXml: DeserializeOwned {
         /// Deserializes an object from an XML file
+        ///
         /// # Arguments
         /// * `filename` - The path of the XML file to be read
         ///
         /// # Errors
-        /// * `serde_rw::Error` - If the file could not be read
+        /// * `anyhow::Error` - If the file could not be read
         ///
         /// # Examples
         /// ```
@@ -42,11 +43,12 @@ pub mod featured {
         }
 
         /// Deserializes an object from an XML string
+        ///
         /// # Arguments
         /// * `text` - An XML file's content
         ///
         /// # Errors
-        /// * `serde_rw::Error` - If the text could not be deserialized
+        /// * `anyhow::Error` - If the text could not be deserialized
         ///
         /// # Examples
         /// ```
@@ -79,8 +81,9 @@ pub mod featured {
 
     pub trait ToXml: Serialize {
         /// Write object as XML to a `std::fmt::Write`r
+        ///
         /// # Errors
-        /// Returns an `serde_rw::Error` in case the serialization fails.
+        /// Returns an `anyhow::Error` in case the serialization fails.
         fn write_xml<W>(&self, writer: W) -> anyhow::Result<()>
         where
             W: Write,
@@ -89,15 +92,17 @@ pub mod featured {
         }
 
         /// Return object as serialized XML string
+        ///
         /// # Errors
-        /// Returns an `serde_rw::Error` in case the serialization fails.
+        /// Returns an `anyhow::Error` in case the serialization fails.
         fn to_xml(&self) -> anyhow::Result<String> {
             Ok(quick_xml::se::to_string(self)?)
         }
 
         /// Return object as a pretty serialized XML string
+        ///
         /// # Errors
-        /// Returns an `serde_rw::Error` in case the serialization fails.
+        /// Returns an `anyhow::Error` in case the serialization fails.
         fn to_xml_pretty(&self, indent_char: char, indent_size: usize) -> anyhow::Result<String> {
             let mut buffer = String::new();
             let mut serializer = Serializer::new(&mut buffer);
@@ -107,15 +112,17 @@ pub mod featured {
         }
 
         /// Writes object as serialized XML string to a file
+        ///
         /// # Errors
-        /// Returns an `serde_rw::Error` in case the serialization fails.
+        /// Returns an `anyhow::Error` in case the serialization fails.
         fn write_to_xml_file(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
             Ok(write(filename, <Self as ToXml>::to_xml(self)?)?)
         }
 
         /// Writes object as a pretty serialized XML string to a file
+        ///
         /// # Errors
-        /// Returns an `serde_rw::Error` in case the serialization fails.
+        /// Returns an `anyhow::Error` in case the serialization fails.
         fn write_to_xml_file_pretty(
             &self,
             filename: impl AsRef<Path>,

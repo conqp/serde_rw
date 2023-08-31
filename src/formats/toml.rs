@@ -7,11 +7,12 @@ pub mod featured {
 
     pub trait FromToml: DeserializeOwned {
         /// Deserializes an object from a TOML file
+        ///
         /// # Arguments
         /// * `filename` - The path of the TOML file to be read
         ///
         /// # Errors
-        /// * `serde_rw::Error` - If the file could not be read
+        /// * `anyhow::Error` - If the file could not be read
         ///
         /// # Examples
         /// ```
@@ -40,11 +41,12 @@ pub mod featured {
         }
 
         /// Deserializes an object from a TOML string
+        ///
         /// # Arguments
         /// * `text` - A TOML file's content
         ///
         /// # Errors
-        /// * `serde_rw::Error` - If the text could not be deserialized
+        /// * `anyhow::Error` - If the text could not be deserialized
         ///
         /// # Examples
         /// ```
@@ -78,15 +80,17 @@ pub mod featured {
 
     pub trait ToToml: Serialize {
         /// Return object as serialized TOML string
+        ///
         /// # Errors
-        /// Returns an `serde_rw::Error` in case the serialization fails.
+        /// Returns an `anyhow::Error` in case the serialization fails.
         fn to_toml(&self) -> anyhow::Result<String> {
             Ok(toml::to_string(self)?)
         }
 
         /// Writes object as serialized TOML string to a file
+        ///
         /// # Errors
-        /// Returns an `serde_rw::Error` in case the serialization fails.
+        /// Returns an `anyhow::Error` in case the serialization fails.
         fn write_to_toml_file(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
             Ok(write(filename, <Self as ToToml>::to_toml(self)?)?)
         }

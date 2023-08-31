@@ -5,11 +5,12 @@ use std::path::Path;
 /// Makes an object capable of writing itself to a file of a specified format
 pub trait ToFile: Serialize + Sized {
     /// Serializes an object into a file dependent on its file extension
+    ///
     /// # Arguments
     /// * `filename` - The path of the file to be written to
     ///
     /// # Errors
-    /// * `serde_rw::Error` - if any serialization or I/O error occur or the file format is not supported
+    /// * `anyhow::Error` - if any serialization or I/O errors occur or the file format is not supported
     fn write_to_file(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
         match extension(filename.as_ref())? {
             #[cfg(feature = "json")]
@@ -27,11 +28,12 @@ pub trait ToFile: Serialize + Sized {
     }
 
     /// Serializes an object into a prettified file dependent on its file extension
+    ///
     /// # Arguments
     /// * `filename` - The path of the file to be written to
     ///
     /// # Errors
-    /// * `serde_rw::Error` - if any serialization or I/O error occur or the file format is not supported
+    /// * `anyhow::Error` - if any serialization or I/O errors occur or the file format is not supported
     fn write_to_file_pretty(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
         match extension(filename.as_ref())? {
             #[cfg(feature = "json")]
