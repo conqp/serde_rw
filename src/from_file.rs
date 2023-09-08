@@ -88,9 +88,7 @@ where
             "xml" => <Self as crate::FromXml>::from_xml_file(filename),
             #[cfg(feature = "yaml")]
             "yml" | "yaml" => <Self as crate::FromYaml>::from_yaml_file(filename),
-            extension => Err(anyhow::Error::msg(format!(
-                "Unsupported extension: '{extension}'",
-            ))),
+            extension => Err(anyhow!("Unsupported extension: '{extension}'")),
         }
     }
 }

@@ -1,4 +1,5 @@
 use crate::functions::extension;
+use anyhow::anyhow;
 use serde::Serialize;
 use std::path::Path;
 
@@ -21,9 +22,7 @@ pub trait ToFile: Serialize + Sized {
             "xml" => <Self as crate::ToXml>::write_to_xml_file(self, filename),
             #[cfg(feature = "yaml")]
             "yml" | "yaml" => <Self as crate::ToYaml>::write_to_yaml_file(self, filename),
-            extension => Err(anyhow::Error::msg(format!(
-                "Unsupported extension: '{extension}'",
-            ))),
+            extension => Err(anyhow!("Unsupported extension: '{extension}'")),
         }
     }
 
@@ -40,9 +39,7 @@ pub trait ToFile: Serialize + Sized {
             "json" => <Self as crate::ToJson>::write_to_json_file_pretty(self, filename),
             #[cfg(feature = "xml")]
             "xml" => <Self as crate::ToXml>::write_to_xml_file_pretty(self, filename, ' ', 4),
-            extension => Err(anyhow::Error::msg(format!(
-                "Unsupported extension: '{extension}'",
-            ))),
+            extension => Err(anyhow!("Unsupported extension: '{extension}'")),
         }
     }
 }
