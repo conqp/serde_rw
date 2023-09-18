@@ -7,13 +7,13 @@ pub use from_file::FromFile;
 pub use to_file::ToFile;
 
 #[cfg(feature = "json")]
-pub use formats::json::featured::{FromJson, ToJson};
+pub use formats::json::{FromJson, ToJson};
 
 #[cfg(feature = "toml")]
-pub use formats::toml::featured::{FromToml, ToToml};
+pub use formats::toml::{FromToml, ToToml};
 
 #[cfg(feature = "xml")]
-pub use formats::xml::featured::{FromXml, ToXml};
+pub use formats::xml::{FromXml, ToXml};
 
 #[cfg(feature = "yaml")]
-pub use formats::yaml::featured::{FromYaml, ToYaml};
+pub use formats::yaml::{FromYaml, ToYaml};
