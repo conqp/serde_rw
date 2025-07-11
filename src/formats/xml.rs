@@ -88,7 +88,7 @@ pub trait ToXml: Serialize {
     where
         W: Write,
     {
-        Ok(quick_xml::se::to_writer(writer, self)?)
+        Ok(quick_xml::se::to_writer(writer, self).map(drop)?)
     }
 
     /// Return object as serialized XML string
