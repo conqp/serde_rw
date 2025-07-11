@@ -1,5 +1,6 @@
 use std::path::Path;
 
+/// Extract the file extension from a path.
 pub fn extension(path: &Path) -> anyhow::Result<&str> {
     path.extension()
         .and_then(std::ffi::OsStr::to_str)
