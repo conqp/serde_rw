@@ -13,8 +13,6 @@ version = "0.5.0"
 edition = "2024"
 exclude = [".gitignore"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 anyhow = "1.0"
 quick-xml = { version = "0.38", features = ["serialize"], optional = true }
@@ -28,6 +26,9 @@ json = ["dep:serde_json"]
 toml = ["dep:toml"]
 xml = ["dep:quick-xml"]
 yaml = ["dep:serde_yaml"]
+
+[package.metadata.docs.rs]
+all-features = true
 
 [lints.rust]
 absolute_paths_not_starting_with_crate = "warn"
