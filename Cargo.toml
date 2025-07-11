@@ -10,7 +10,7 @@ documentation = "https://docs.rs/serde_rw"
 keywords = ["serde", "file", "read", "write"]
 categories = ["parsing"]
 version = "0.4.2"
-edition = "2021"
+edition = "2024"
 exclude = [".gitignore"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
