@@ -5,6 +5,7 @@ use std::fmt::Write;
 use std::fs::{read_to_string, write};
 use std::path::Path;
 
+/// Allow deserialization from XML.
 #[allow(clippy::module_name_repetitions)]
 pub trait FromXml: DeserializeOwned {
     /// Deserializes an object from an XML file
@@ -78,6 +79,7 @@ pub trait FromXml: DeserializeOwned {
     }
 }
 
+/// Allow serialization to XML.
 #[allow(clippy::module_name_repetitions)]
 pub trait ToXml: Serialize {
     /// Write object as XML to a `std::fmt::Write`r

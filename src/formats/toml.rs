@@ -3,6 +3,7 @@ use serde::Serialize;
 use std::fs::{read_to_string, write};
 use std::path::Path;
 
+/// Allow deserialization from TOML.
 #[allow(clippy::module_name_repetitions)]
 pub trait FromToml: DeserializeOwned {
     /// Deserializes an object from a TOML file
@@ -77,6 +78,7 @@ pub trait FromToml: DeserializeOwned {
     }
 }
 
+/// Allow serialization to TOML.
 #[allow(clippy::module_name_repetitions)]
 pub trait ToToml: Serialize {
     /// Return object as serialized TOML string

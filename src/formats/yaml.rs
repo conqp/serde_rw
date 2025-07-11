@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::fs::{read_to_string, write};
 use std::path::Path;
 
+/// Allow deserialization from YAML.
 #[allow(clippy::module_name_repetitions)]
 pub trait FromYaml: for<'de> Deserialize<'de> {
     /// Deserializes an object from a YAML file
@@ -76,6 +77,7 @@ pub trait FromYaml: for<'de> Deserialize<'de> {
     }
 }
 
+/// Allow serialization to YAML.
 #[allow(clippy::module_name_repetitions)]
 pub trait ToYaml: Serialize {
     /// Return object as serialized YAML string

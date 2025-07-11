@@ -3,6 +3,7 @@ use std::fs::{read_to_string, write};
 use std::io::{BufWriter, Write};
 use std::path::Path;
 
+/// Allow deserialization from JSON.
 #[allow(clippy::module_name_repetitions)]
 pub trait FromJson: for<'de> Deserialize<'de> {
     /// Deserializes an object from a JSON file
@@ -76,6 +77,7 @@ pub trait FromJson: for<'de> Deserialize<'de> {
     }
 }
 
+/// Allow serialization to JSON.
 #[allow(clippy::module_name_repetitions)]
 pub trait ToJson: Serialize {
     /// Write object as JSON to a `std::io::Write`r
