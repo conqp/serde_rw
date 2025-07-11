@@ -1,3 +1,6 @@
+//! A library to extend serde serializers and deserializers with the ability
+//! to read / write different file formats from / to files.
+
 mod formats;
 mod from_file;
 mod functions;
