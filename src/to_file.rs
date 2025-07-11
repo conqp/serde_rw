@@ -1,7 +1,9 @@
-use crate::functions::extension;
+use std::path::Path;
+
 use anyhow::anyhow;
 use serde::Serialize;
-use std::path::Path;
+
+use crate::functions::extension;
 
 /// Makes an object capable of writing itself to a file of a specified format
 pub trait ToFile: Serialize + Sized {

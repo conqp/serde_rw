@@ -1,9 +1,9 @@
-use quick_xml::se::Serializer;
-use serde::de::DeserializeOwned;
-use serde::Serialize;
 use std::fmt::Write;
 use std::fs::{read_to_string, write};
 use std::path::Path;
+
+use quick_xml::se::Serializer;
+use serde::{de::DeserializeOwned, Serialize};
 
 /// Allow deserialization from XML.
 #[allow(clippy::module_name_repetitions)]

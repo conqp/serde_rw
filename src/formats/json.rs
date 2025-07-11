@@ -1,7 +1,8 @@
-use serde::{Deserialize, Serialize};
 use std::fs::{read_to_string, write};
 use std::io::{BufWriter, Write};
 use std::path::Path;
+
+use serde::{Deserialize, Serialize};
 
 /// Allow deserialization from JSON.
 #[allow(clippy::module_name_repetitions)]

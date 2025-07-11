@@ -1,7 +1,9 @@
-use crate::functions::extension;
-use anyhow::anyhow;
 use serde::Deserialize;
 use std::path::Path;
+
+use anyhow::anyhow;
+
+use crate::functions::extension;
 
 /// Makes an object capable of reading itself from a file of a specified format
 pub trait FromFile

@@ -1,6 +1,7 @@
-use serde::{Deserialize, Serialize};
 use std::fs::{read_to_string, write};
 use std::path::Path;
+
+use serde::{Deserialize, Serialize};
 
 /// Allow deserialization from YAML.
 #[allow(clippy::module_name_repetitions)]
