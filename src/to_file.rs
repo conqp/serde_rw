@@ -20,7 +20,7 @@ pub trait ToFile: Serialize + Sized {
     /// # Errors
     /// * `anyhow::Error` - if any serialization or I/O errors occur or the file format is not supported
     fn write_to_file(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
-        match extension(filename.as_ref())? {
+        match extension(filename.as_ref())?.as_str() {
             #[cfg(feature = "json")]
             "json" => <Self as crate::ToJson>::write_to_json_file(self, filename),
             #[cfg(feature = "toml")]
@@ -41,7 +41,7 @@ pub trait ToFile: Serialize + Sized {
     /// # Errors
     /// * `anyhow::Error` - if any serialization or I/O errors occur or the file format is not supported
     fn write_to_file_pretty(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
-        match extension(filename.as_ref())? {
+        match extension(filename.as_ref())?.as_str() {
             #[cfg(feature = "json")]
             "json" => <Self as crate::ToJson>::write_to_json_file_pretty(self, filename),
             #[cfg(feature = "xml")]

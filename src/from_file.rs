@@ -82,7 +82,7 @@ where
     /// }
     /// ```
     fn from_file(filename: impl AsRef<Path>) -> anyhow::Result<Self> {
-        match extension(filename.as_ref())? {
+        match extension(filename.as_ref())?.as_str() {
             #[cfg(feature = "json")]
             "json" => <Self as crate::FromJson>::from_json_file(filename),
             #[cfg(feature = "toml")]
