@@ -1,7 +1,8 @@
 use std::fs::{read_to_string, write};
 use std::path::Path;
 
-use serde::{de::DeserializeOwned, Serialize};
+use serde::Serialize;
+use serde::de::DeserializeOwned;
 
 /// Allow deserialization from TOML.
 #[allow(clippy::module_name_repetitions)]
