@@ -7,13 +7,11 @@ use serde::{Deserialize, Serialize};
 /// Allow deserialization from JSON.
 #[allow(clippy::module_name_repetitions)]
 pub trait FromJson: for<'de> Deserialize<'de> {
-    /// Deserializes an object from a JSON file
-    ///
-    /// # Arguments
-    /// * `filename` - The path of the JSON file to be read
+    /// Deserializes an object from a JSON file.
     ///
     /// # Errors
-    /// * `anyhow::Error` - If the file could not be read
+    ///
+    /// Returns an [`Error`](crate::Error) if the deserialization fails.
     ///
     /// # Examples
     /// ```
@@ -41,13 +39,11 @@ pub trait FromJson: for<'de> Deserialize<'de> {
         <Self as FromJson>::from_json_string(&read_to_string(filename)?)
     }
 
-    /// Deserializes an object from a JSON string
-    ///
-    /// # Arguments
-    /// * `text` - A JSON file's content
+    /// Deserializes an object from a JSON string.
     ///
     /// # Errors
-    /// * `anyhow::Error` - If the text could not be deserialized
+    ///
+    /// Returns an [`Error`](crate::Error) if the deserialization fails.
     ///
     /// # Examples
     /// ```
@@ -81,10 +77,11 @@ pub trait FromJson: for<'de> Deserialize<'de> {
 /// Allow serialization to JSON.
 #[allow(clippy::module_name_repetitions)]
 pub trait ToJson: Serialize {
-    /// Write object as JSON to a `std::io::Write`r
+    /// Write object as JSON to a [writer](Write).
     ///
     /// # Errors
-    /// Returns an `anyhow::Error` in case the serialization fails.
+    ///
+    /// Returns an [`Error`](crate::Error) if the serialization fails.
     fn write_json<W>(&self, writer: W) -> crate::Result<()>
     where
         W: Write,
@@ -92,10 +89,11 @@ pub trait ToJson: Serialize {
         Ok(serde_json::to_writer(writer, self)?)
     }
 
-    /// Write object as pretty JSON to a `std::io::Write`
+    /// Write object as pretty JSON to a [writer](Write).
     ///
     /// # Errors
-    /// Returns an `anyhow::Error` in case the serialization fails.
+    ///
+    /// Returns an [`Error`](crate::Error) if the serialization fails.
     fn write_json_pretty<W>(&self, writer: W) -> crate::Result<()>
     where
         W: Write,
@@ -103,34 +101,38 @@ pub trait ToJson: Serialize {
         Ok(serde_json::to_writer_pretty(writer, self)?)
     }
 
-    /// Return object as serialized JSON string
+    /// Return object as serialized JSON string.
     ///
     /// # Errors
-    /// Returns an `anyhow::Error` in case the serialization fails.
+    ///
+    /// Returns an [`Error`](crate::Error) if the serialization fails.
     fn to_json(&self) -> crate::Result<String> {
         Ok(serde_json::to_string(self)?)
     }
 
-    /// Return object as prettified JSON string
+    /// Return object as prettified JSON string.
     ///
     /// # Errors
-    /// Returns an `anyhow::Error` in case the serialization fails.
+    ///
+    /// Returns an [`Error`](crate::Error) if the serialization fails.
     fn to_json_pretty(&self) -> crate::Result<String> {
         Ok(serde_json::to_string_pretty(self)?)
     }
 
-    /// Write object as serialized JSON string to a file
+    /// Write object as serialized JSON string to a file.
     ///
     /// # Errors
-    /// Returns an `anyhow::Error` in case the serialization fails.
+    ///
+    /// Returns an [`Error`](crate::Error) if the serialization fails.
     fn write_to_json_file(&self, filename: impl AsRef<Path>) -> crate::Result<()> {
         Ok(write(filename, <Self as ToJson>::to_json(self)?)?)
     }
 
-    /// Write object as serialized JSON string to a file
+    /// Write object as serialized JSON string to a file.
     ///
     /// # Errors
-    /// Returns an `anyhow::Error` in case the serialization fails.
+    ///
+    /// Returns an [`Error`](crate::Error) if the serialization fails.
     fn write_to_json_file_pretty(&self, filename: impl AsRef<Path>) -> crate::Result<()> {
         Ok(write(filename, <Self as ToJson>::to_json_pretty(self)?)?)
     }

@@ -10,15 +10,13 @@ const XML_INDENT_CHAR: char = ' ';
 #[cfg(feature = "xml")]
 const XML_INDENT_LEN: usize = 4;
 
-/// Makes an object capable of writing itself to a file of a specified format
+/// Makes an object capable of writing itself to a file of a specified format.
 pub trait ToFile: Serialize + Sized {
-    /// Serializes an object into a file dependent on its file extension
-    ///
-    /// # Arguments
-    /// * `filename` - The path of the file to be written to
+    /// Serializes an object into a file dependent on its file extension.
     ///
     /// # Errors
-    /// * `anyhow::Error` - if any serialization or I/O errors occur or the file format is not supported
+    ///
+    /// Returns an [`Error`] if the serialization fails.
     fn write_to_file(&self, filename: impl AsRef<Path>) -> crate::Result<()> {
         let extension = filename
             .as_ref()
@@ -39,13 +37,13 @@ pub trait ToFile: Serialize + Sized {
         }
     }
 
-    /// Serializes an object into a prettified file dependent on its file extension
+    /// Serializes an object into a prettified file dependent on its file extension.
     ///
-    /// # Arguments
-    /// * `filename` - The path of the file to be written to
+    /// This will fall back to normal serialization if the given format does not support pretty printing.
     ///
     /// # Errors
-    /// * `anyhow::Error` - if any serialization or I/O errors occur or the file format is not supported
+    ///
+    /// Returns an [`Error`] if the serialization fails.
     fn write_to_file_pretty(&self, filename: impl AsRef<Path>) -> crate::Result<()> {
         let extension = filename
             .as_ref()

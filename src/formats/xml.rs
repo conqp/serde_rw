@@ -9,13 +9,11 @@ use serde::de::DeserializeOwned;
 /// Allow deserialization from XML.
 #[allow(clippy::module_name_repetitions)]
 pub trait FromXml: DeserializeOwned {
-    /// Deserializes an object from an XML file
-    ///
-    /// # Arguments
-    /// * `filename` - The path of the XML file to be read
+    /// Deserializes an object from an XML file.
     ///
     /// # Errors
-    /// * `anyhow::Error` - If the file could not be read
+    ///
+    /// Returns an [`Error`](crate::Error) if the deserialization fails.
     ///
     /// # Examples
     /// ```
@@ -43,13 +41,11 @@ pub trait FromXml: DeserializeOwned {
         <Self as FromXml>::from_xml_string(&read_to_string(filename)?)
     }
 
-    /// Deserializes an object from an XML string
-    ///
-    /// # Arguments
-    /// * `text` - An XML file's content
+    /// Deserializes an object from an XML string.
     ///
     /// # Errors
-    /// * `anyhow::Error` - If the text could not be deserialized
+    ///
+    /// Returns an [`Error`](crate::Error) if the deserialization fails.
     ///
     /// # Examples
     /// ```
@@ -83,10 +79,11 @@ pub trait FromXml: DeserializeOwned {
 /// Allow serialization to XML.
 #[allow(clippy::module_name_repetitions)]
 pub trait ToXml: Serialize {
-    /// Write object as XML to a `std::fmt::Write`r
+    /// Write object as XML to a [writer](Write).
     ///
     /// # Errors
-    /// Returns an `anyhow::Error` in case the serialization fails.
+    ///
+    /// Returns an [`Error`](crate::Error) if the serialization fails.
     fn write_xml<W>(&self, writer: W) -> crate::Result<()>
     where
         W: Write,
@@ -94,18 +91,20 @@ pub trait ToXml: Serialize {
         Ok(quick_xml::se::to_writer(writer, self).map(drop)?)
     }
 
-    /// Return object as serialized XML string
+    /// Return object as serialized XML string.
     ///
     /// # Errors
-    /// Returns an `anyhow::Error` in case the serialization fails.
+    ///
+    /// Returns an [`Error`](crate::Error) if the serialization fails.
     fn to_xml(&self) -> crate::Result<String> {
         Ok(quick_xml::se::to_string(self)?)
     }
 
-    /// Return object as a pretty serialized XML string
+    /// Return object as a pretty serialized XML string.
     ///
     /// # Errors
-    /// Returns an `anyhow::Error` in case the serialization fails.
+    ///
+    /// Returns an [`Error`](crate::Error) if the serialization fails.
     fn to_xml_pretty(&self, indent_char: char, indent_size: usize) -> crate::Result<String> {
         let mut buffer = String::new();
         let mut serializer = Serializer::new(&mut buffer);
@@ -114,18 +113,20 @@ pub trait ToXml: Serialize {
         Ok(buffer)
     }
 
-    /// Writes object as serialized XML string to a file
+    /// Writes object as serialized XML string to a file.
     ///
     /// # Errors
-    /// Returns an `anyhow::Error` in case the serialization fails.
+    ///
+    /// Returns an [`Error`](crate::Error) if the serialization fails.
     fn write_to_xml_file(&self, filename: impl AsRef<Path>) -> crate::Result<()> {
         Ok(write(filename, <Self as ToXml>::to_xml(self)?)?)
     }
 
-    /// Writes object as a pretty serialized XML string to a file
+    /// Writes object as a pretty serialized XML string to a file.
     ///
     /// # Errors
-    /// Returns an `anyhow::Error` in case the serialization fails.
+    ///
+    /// Returns an [`Error`](crate::Error) if the serialization fails.
     fn write_to_xml_file_pretty(
         &self,
         filename: impl AsRef<Path>,

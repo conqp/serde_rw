@@ -7,13 +7,11 @@ use serde::de::DeserializeOwned;
 /// Allow deserialization from TOML.
 #[allow(clippy::module_name_repetitions)]
 pub trait FromToml: DeserializeOwned {
-    /// Deserializes an object from a TOML file
-    ///
-    /// # Arguments
-    /// * `filename` - The path of the TOML file to be read
+    /// Deserializes an object from a TOML file.
     ///
     /// # Errors
-    /// * `anyhow::Error` - If the file could not be read
+    ///
+    /// Returns an [`Error`](crate::Error) if the deserialization fails.
     ///
     /// # Examples
     /// ```
@@ -41,13 +39,11 @@ pub trait FromToml: DeserializeOwned {
         <Self as FromToml>::from_toml_string(&read_to_string(filename)?)
     }
 
-    /// Deserializes an object from a TOML string
-    ///
-    /// # Arguments
-    /// * `text` - A TOML file's content
+    /// Deserializes an object from a TOML string.
     ///
     /// # Errors
-    /// * `anyhow::Error` - If the text could not be deserialized
+    ///
+    /// Returns an [`Error`](crate::Error) if the deserialization fails.
     ///
     /// # Examples
     /// ```
@@ -82,18 +78,20 @@ pub trait FromToml: DeserializeOwned {
 /// Allow serialization to TOML.
 #[allow(clippy::module_name_repetitions)]
 pub trait ToToml: Serialize {
-    /// Return object as serialized TOML string
+    /// Return object as serialized TOML string.
     ///
     /// # Errors
-    /// Returns an `anyhow::Error` in case the serialization fails.
+    ///
+    /// Returns an [`Error`](crate::Error) if the serialization fails.
     fn to_toml(&self) -> crate::Result<String> {
         Ok(toml::to_string(self)?)
     }
 
-    /// Writes object as serialized TOML string to a file
+    /// Writes object as serialized TOML string to a file.
     ///
     /// # Errors
-    /// Returns an `anyhow::Error` in case the serialization fails.
+    ///
+    /// Returns an [`Error`](crate::Error) if the serialization fails.
     fn write_to_toml_file(&self, filename: impl AsRef<Path>) -> crate::Result<()> {
         Ok(write(filename, <Self as ToToml>::to_toml(self)?)?)
     }

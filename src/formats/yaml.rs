@@ -6,13 +6,11 @@ use serde::{Deserialize, Serialize};
 /// Allow deserialization from YAML.
 #[allow(clippy::module_name_repetitions)]
 pub trait FromYaml: for<'de> Deserialize<'de> {
-    /// Deserializes an object from a YAML file
-    ///
-    /// # Arguments
-    /// * `filename` - The path of the YAML file to be read
+    /// Deserializes an object from a YAML file.
     ///
     /// # Errors
-    /// * `anyhow::Error` - If the file could not be read
+    ///
+    /// Returns an [`Error`](crate::Error) if the deserialization fails.
     ///
     /// # Examples
     /// ```
@@ -40,13 +38,11 @@ pub trait FromYaml: for<'de> Deserialize<'de> {
         <Self as FromYaml>::from_yaml_string(&read_to_string(filename)?)
     }
 
-    /// Deserializes an object from a YAML string
-    ///
-    /// # Arguments
-    /// * `text` - A YAML file's content
+    /// Deserializes an object from a YAML string.
     ///
     /// # Errors
-    /// * `anyhow::Error` - If the text could not be deserialized
+    ///
+    /// Returns an [`Error`](crate::Error) if the deserialization fails.
     ///
     /// # Examples
     /// ```
@@ -81,18 +77,20 @@ pub trait FromYaml: for<'de> Deserialize<'de> {
 /// Allow serialization to YAML.
 #[allow(clippy::module_name_repetitions)]
 pub trait ToYaml: Serialize {
-    /// Return object as serialized YAML string
+    /// Return object as serialized YAML string.
     ///
     /// # Errors
-    /// Returns an `anyhow::Error` in case the serialization fails.
+    ///
+    /// Returns an [`Error`](crate::Error) if the serialization fails.
     fn to_yaml(&self) -> crate::Result<String> {
         Ok(serde_yaml::to_string(self)?)
     }
 
-    /// Writes object as serialized YAML string to a file
+    /// Writes object as serialized YAML string to a file.
     ///
     /// # Errors
-    /// Returns an `anyhow::Error` in case the serialization fails.
+    ///
+    /// Returns an [`Error`](crate::Error) if the serialization fails.
     fn write_to_yaml_file(&self, filename: impl AsRef<Path>) -> crate::Result<()> {
         Ok(write(filename, <Self as ToYaml>::to_yaml(self)?)?)
     }

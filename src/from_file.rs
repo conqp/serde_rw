@@ -5,18 +5,16 @@ use serde::Deserialize;
 
 use crate::Error;
 
-/// Makes an object capable of reading itself from a file of a specified format
+/// Makes an object capable of reading itself from a file of a specified format.
 pub trait FromFile
 where
     for<'de> Self: Deserialize<'de>,
 {
-    /// Deserializes an object from a file dependent on its file extension
-    ///
-    /// # Arguments
-    /// * `filename` - The path of the file to be read
+    /// Deserializes an object from a file dependent on its file extension.
     ///
     /// # Errors
-    /// * `anyhow::Error` - If the file could not be read
+    ///
+    /// Returns an [`Error`] if the deserialization fails.
     ///
     /// # Examples
     /// ```
