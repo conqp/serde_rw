@@ -5,6 +5,11 @@ use serde::Serialize;
 
 use crate::functions::extension;
 
+#[cfg(feature = "xml")]
+const XML_INDENT_CHAR: char = ' ';
+#[cfg(feature = "xml")]
+const XML_INDENT_LEN: usize = 4;
+
 /// Makes an object capable of writing itself to a file of a specified format
 pub trait ToFile: Serialize + Sized {
     /// Serializes an object into a file dependent on its file extension
@@ -40,7 +45,12 @@ pub trait ToFile: Serialize + Sized {
             #[cfg(feature = "json")]
             "json" => <Self as crate::ToJson>::write_to_json_file_pretty(self, filename),
             #[cfg(feature = "xml")]
-            "xml" => <Self as crate::ToXml>::write_to_xml_file_pretty(self, filename, ' ', 4),
+            "xml" => <Self as crate::ToXml>::write_to_xml_file_pretty(
+                self,
+                filename,
+                XML_INDENT_CHAR,
+                XML_INDENT_LEN,
+            ),
             _ => self.write_to_file(filename),
         }
     }
