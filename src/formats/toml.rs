@@ -37,7 +37,7 @@ pub trait FromToml: DeserializeOwned {
     ///     );
     /// }
     /// ```
-    fn from_toml_file(filename: impl AsRef<Path>) -> anyhow::Result<Self> {
+    fn from_toml_file(filename: impl AsRef<Path>) -> crate::Result<Self> {
         <Self as FromToml>::from_toml_string(&read_to_string(filename)?)
     }
 
@@ -74,7 +74,7 @@ pub trait FromToml: DeserializeOwned {
     ///     );
     /// }
     /// ```
-    fn from_toml_string(text: &str) -> anyhow::Result<Self> {
+    fn from_toml_string(text: &str) -> crate::Result<Self> {
         Ok(toml::from_str(text)?)
     }
 }
@@ -86,7 +86,7 @@ pub trait ToToml: Serialize {
     ///
     /// # Errors
     /// Returns an `anyhow::Error` in case the serialization fails.
-    fn to_toml(&self) -> anyhow::Result<String> {
+    fn to_toml(&self) -> crate::Result<String> {
         Ok(toml::to_string(self)?)
     }
 
@@ -94,7 +94,7 @@ pub trait ToToml: Serialize {
     ///
     /// # Errors
     /// Returns an `anyhow::Error` in case the serialization fails.
-    fn write_to_toml_file(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
+    fn write_to_toml_file(&self, filename: impl AsRef<Path>) -> crate::Result<()> {
         Ok(write(filename, <Self as ToToml>::to_toml(self)?)?)
     }
 }

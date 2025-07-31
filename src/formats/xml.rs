@@ -39,7 +39,7 @@ pub trait FromXml: DeserializeOwned {
     ///     );
     /// }
     /// ```
-    fn from_xml_file(filename: impl AsRef<Path>) -> anyhow::Result<Self> {
+    fn from_xml_file(filename: impl AsRef<Path>) -> crate::Result<Self> {
         <Self as FromXml>::from_xml_string(&read_to_string(filename)?)
     }
 
@@ -75,7 +75,7 @@ pub trait FromXml: DeserializeOwned {
     ///     );
     /// }
     /// ```
-    fn from_xml_string(text: &str) -> anyhow::Result<Self> {
+    fn from_xml_string(text: &str) -> crate::Result<Self> {
         Ok(quick_xml::de::from_str(text)?)
     }
 }
@@ -87,7 +87,7 @@ pub trait ToXml: Serialize {
     ///
     /// # Errors
     /// Returns an `anyhow::Error` in case the serialization fails.
-    fn write_xml<W>(&self, writer: W) -> anyhow::Result<()>
+    fn write_xml<W>(&self, writer: W) -> crate::Result<()>
     where
         W: Write,
     {
@@ -98,7 +98,7 @@ pub trait ToXml: Serialize {
     ///
     /// # Errors
     /// Returns an `anyhow::Error` in case the serialization fails.
-    fn to_xml(&self) -> anyhow::Result<String> {
+    fn to_xml(&self) -> crate::Result<String> {
         Ok(quick_xml::se::to_string(self)?)
     }
 
@@ -106,7 +106,7 @@ pub trait ToXml: Serialize {
     ///
     /// # Errors
     /// Returns an `anyhow::Error` in case the serialization fails.
-    fn to_xml_pretty(&self, indent_char: char, indent_size: usize) -> anyhow::Result<String> {
+    fn to_xml_pretty(&self, indent_char: char, indent_size: usize) -> crate::Result<String> {
         let mut buffer = String::new();
         let mut serializer = Serializer::new(&mut buffer);
         serializer.indent(indent_char, indent_size);
@@ -118,7 +118,7 @@ pub trait ToXml: Serialize {
     ///
     /// # Errors
     /// Returns an `anyhow::Error` in case the serialization fails.
-    fn write_to_xml_file(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
+    fn write_to_xml_file(&self, filename: impl AsRef<Path>) -> crate::Result<()> {
         Ok(write(filename, <Self as ToXml>::to_xml(self)?)?)
     }
 
@@ -131,7 +131,7 @@ pub trait ToXml: Serialize {
         filename: impl AsRef<Path>,
         indent_char: char,
         indent_size: usize,
-    ) -> anyhow::Result<()> {
+    ) -> crate::Result<()> {
         Ok(write(
             filename,
             <Self as ToXml>::to_xml_pretty(self, indent_char, indent_size)?,

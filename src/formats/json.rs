@@ -1,5 +1,5 @@
 use std::fs::{read_to_string, write};
-use std::io::{BufWriter, Write};
+use std::io::Write;
 use std::path::Path;
 
 use serde::{Deserialize, Serialize};
@@ -37,7 +37,7 @@ pub trait FromJson: for<'de> Deserialize<'de> {
     ///     );
     /// }
     /// ```
-    fn from_json_file(filename: impl AsRef<Path>) -> anyhow::Result<Self> {
+    fn from_json_file(filename: impl AsRef<Path>) -> crate::Result<Self> {
         <Self as FromJson>::from_json_string(&read_to_string(filename)?)
     }
 
@@ -73,7 +73,7 @@ pub trait FromJson: for<'de> Deserialize<'de> {
     ///     );
     /// }
     /// ```
-    fn from_json_string(text: &str) -> anyhow::Result<Self> {
+    fn from_json_string(text: &str) -> crate::Result<Self> {
         Ok(serde_json::from_str(text)?)
     }
 }
@@ -85,7 +85,7 @@ pub trait ToJson: Serialize {
     ///
     /// # Errors
     /// Returns an `anyhow::Error` in case the serialization fails.
-    fn write_json<W>(&self, writer: W) -> anyhow::Result<()>
+    fn write_json<W>(&self, writer: W) -> crate::Result<()>
     where
         W: Write,
     {
@@ -96,7 +96,7 @@ pub trait ToJson: Serialize {
     ///
     /// # Errors
     /// Returns an `anyhow::Error` in case the serialization fails.
-    fn write_json_pretty<W>(&self, writer: W) -> anyhow::Result<()>
+    fn write_json_pretty<W>(&self, writer: W) -> crate::Result<()>
     where
         W: Write,
     {
@@ -107,7 +107,7 @@ pub trait ToJson: Serialize {
     ///
     /// # Errors
     /// Returns an `anyhow::Error` in case the serialization fails.
-    fn to_json(&self) -> anyhow::Result<String> {
+    fn to_json(&self) -> crate::Result<String> {
         Ok(serde_json::to_string(self)?)
     }
 
@@ -115,17 +115,15 @@ pub trait ToJson: Serialize {
     ///
     /// # Errors
     /// Returns an `anyhow::Error` in case the serialization fails.
-    fn to_json_pretty(&self) -> anyhow::Result<String> {
-        let mut writer = BufWriter::new(Vec::new());
-        <Self as ToJson>::write_json_pretty(self, &mut writer)?;
-        Ok(String::from_utf8(writer.into_inner()?)?)
+    fn to_json_pretty(&self) -> crate::Result<String> {
+        Ok(serde_json::to_string_pretty(self)?)
     }
 
     /// Write object as serialized JSON string to a file
     ///
     /// # Errors
     /// Returns an `anyhow::Error` in case the serialization fails.
-    fn write_to_json_file(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
+    fn write_to_json_file(&self, filename: impl AsRef<Path>) -> crate::Result<()> {
         Ok(write(filename, <Self as ToJson>::to_json(self)?)?)
     }
 
@@ -133,7 +131,7 @@ pub trait ToJson: Serialize {
     ///
     /// # Errors
     /// Returns an `anyhow::Error` in case the serialization fails.
-    fn write_to_json_file_pretty(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
+    fn write_to_json_file_pretty(&self, filename: impl AsRef<Path>) -> crate::Result<()> {
         Ok(write(filename, <Self as ToJson>::to_json_pretty(self)?)?)
     }
 }

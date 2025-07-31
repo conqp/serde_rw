@@ -1,9 +1,9 @@
+use std::ffi::OsStr;
 use std::path::Path;
 
-use anyhow::anyhow;
 use serde::Serialize;
 
-use crate::functions::extension;
+use crate::Error;
 
 #[cfg(feature = "xml")]
 const XML_INDENT_CHAR: char = ' ';
@@ -19,17 +19,23 @@ pub trait ToFile: Serialize + Sized {
     ///
     /// # Errors
     /// * `anyhow::Error` - if any serialization or I/O errors occur or the file format is not supported
-    fn write_to_file(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
-        match extension(filename.as_ref())?.as_str() {
+    fn write_to_file(&self, filename: impl AsRef<Path>) -> crate::Result<()> {
+        let extension = filename
+            .as_ref()
+            .extension()
+            .map(OsStr::to_ascii_lowercase)
+            .ok_or(Error::NoFileExtensionsSpecified)?;
+
+        match extension.as_encoded_bytes() {
             #[cfg(feature = "json")]
-            "json" => <Self as crate::ToJson>::write_to_json_file(self, filename),
+            b"json" => <Self as crate::ToJson>::write_to_json_file(self, filename),
             #[cfg(feature = "toml")]
-            "toml" => <Self as crate::ToToml>::write_to_toml_file(self, filename),
+            b"toml" => <Self as crate::ToToml>::write_to_toml_file(self, filename),
             #[cfg(feature = "xml")]
-            "xml" => <Self as crate::ToXml>::write_to_xml_file(self, filename),
+            b"xml" => <Self as crate::ToXml>::write_to_xml_file(self, filename),
             #[cfg(feature = "yaml")]
-            "yml" | "yaml" => <Self as crate::ToYaml>::write_to_yaml_file(self, filename),
-            extension => Err(anyhow!("Unsupported extension: '{extension}'")),
+            b"yml" | b"yaml" => <Self as crate::ToYaml>::write_to_yaml_file(self, filename),
+            _ => Err(Error::UnsupportedFileExtension(extension)),
         }
     }
 
@@ -40,12 +46,18 @@ pub trait ToFile: Serialize + Sized {
     ///
     /// # Errors
     /// * `anyhow::Error` - if any serialization or I/O errors occur or the file format is not supported
-    fn write_to_file_pretty(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
-        match extension(filename.as_ref())?.as_str() {
+    fn write_to_file_pretty(&self, filename: impl AsRef<Path>) -> crate::Result<()> {
+        let extension = filename
+            .as_ref()
+            .extension()
+            .map(OsStr::to_ascii_lowercase)
+            .ok_or(Error::NoFileExtensionsSpecified)?;
+
+        match extension.as_encoded_bytes() {
             #[cfg(feature = "json")]
-            "json" => <Self as crate::ToJson>::write_to_json_file_pretty(self, filename),
+            b"json" => <Self as crate::ToJson>::write_to_json_file_pretty(self, filename),
             #[cfg(feature = "xml")]
-            "xml" => <Self as crate::ToXml>::write_to_xml_file_pretty(
+            b"xml" => <Self as crate::ToXml>::write_to_xml_file_pretty(
                 self,
                 filename,
                 XML_INDENT_CHAR,

@@ -36,7 +36,7 @@ pub trait FromYaml: for<'de> Deserialize<'de> {
     ///     );
     /// }
     /// ```
-    fn from_yaml_file(filename: impl AsRef<Path>) -> anyhow::Result<Self> {
+    fn from_yaml_file(filename: impl AsRef<Path>) -> crate::Result<Self> {
         <Self as FromYaml>::from_yaml_string(&read_to_string(filename)?)
     }
 
@@ -73,7 +73,7 @@ pub trait FromYaml: for<'de> Deserialize<'de> {
     ///     );
     /// }
     /// ```
-    fn from_yaml_string(text: &str) -> anyhow::Result<Self> {
+    fn from_yaml_string(text: &str) -> crate::Result<Self> {
         Ok(serde_yaml::from_str(text)?)
     }
 }
@@ -85,7 +85,7 @@ pub trait ToYaml: Serialize {
     ///
     /// # Errors
     /// Returns an `anyhow::Error` in case the serialization fails.
-    fn to_yaml(&self) -> anyhow::Result<String> {
+    fn to_yaml(&self) -> crate::Result<String> {
         Ok(serde_yaml::to_string(self)?)
     }
 
@@ -93,7 +93,7 @@ pub trait ToYaml: Serialize {
     ///
     /// # Errors
     /// Returns an `anyhow::Error` in case the serialization fails.
-    fn write_to_yaml_file(&self, filename: impl AsRef<Path>) -> anyhow::Result<()> {
+    fn write_to_yaml_file(&self, filename: impl AsRef<Path>) -> crate::Result<()> {
         Ok(write(filename, <Self as ToYaml>::to_yaml(self)?)?)
     }
 }

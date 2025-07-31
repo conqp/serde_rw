@@ -1,9 +1,9 @@
+use std::ffi::OsStr;
 use std::path::Path;
 
-use anyhow::anyhow;
 use serde::Deserialize;
 
-use crate::functions::extension;
+use crate::Error;
 
 /// Makes an object capable of reading itself from a file of a specified format
 pub trait FromFile
@@ -81,17 +81,23 @@ where
     ///     );
     /// }
     /// ```
-    fn from_file(filename: impl AsRef<Path>) -> anyhow::Result<Self> {
-        match extension(filename.as_ref())?.as_str() {
+    fn from_file(filename: impl AsRef<Path>) -> crate::Result<Self> {
+        let extension = filename
+            .as_ref()
+            .extension()
+            .map(OsStr::to_ascii_lowercase)
+            .ok_or(Error::NoFileExtensionsSpecified)?;
+
+        match extension.as_encoded_bytes() {
             #[cfg(feature = "json")]
-            "json" => <Self as crate::FromJson>::from_json_file(filename),
+            b"json" => <Self as crate::FromJson>::from_json_file(filename),
             #[cfg(feature = "toml")]
-            "toml" => <Self as crate::FromToml>::from_toml_file(filename),
+            b"toml" => <Self as crate::FromToml>::from_toml_file(filename),
             #[cfg(feature = "xml")]
-            "xml" => <Self as crate::FromXml>::from_xml_file(filename),
+            b"xml" => <Self as crate::FromXml>::from_xml_file(filename),
             #[cfg(feature = "yaml")]
-            "yml" | "yaml" => <Self as crate::FromYaml>::from_yaml_file(filename),
-            extension => Err(anyhow!("Unsupported extension: '{extension}'")),
+            b"yml" | b"yaml" => <Self as crate::FromYaml>::from_yaml_file(filename),
+            _ => Err(Error::UnsupportedFileExtension(extension)),
         }
     }
 }
